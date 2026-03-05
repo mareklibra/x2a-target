@@ -1,0 +1,14 @@
+[
+  {
+    "name": "nginx-multisite",
+    "path": "cookbooks/nginx-multisite",
+    "description": "Configures Nginx with multiple SSL-enabled virtual hosts, security hardening, and firewall configuration",
+    "technology": "Chef"
+  },
+  {
+    "name": "cache",
+    "path": "cookbooks/cache",
+    "description": "Configures caching services including Memcached and Redis with authentication",
+    "technology": "Chef"
+  }
+]
