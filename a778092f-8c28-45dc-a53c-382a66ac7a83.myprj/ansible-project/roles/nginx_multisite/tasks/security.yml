@@ -1,0 +1,68 @@
+---
+- name: Install security packages
+  ansible.builtin.package:
+    name:
+      - fail2ban
+      - ufw
+    state: present
+- name: Enable and start fail2ban service
+  ansible.builtin.service:
+    name: fail2ban
+    state: started
+    enabled: true
+- name: Configure fail2ban jail
+  ansible.builtin.template:
+    src: fail2ban.jail.local.j2
+    dest: /etc/fail2ban/jail.local
+    mode: "0644"
+  notify: Restart fail2ban
+- name: Set UFW default deny policy
+  ansible.builtin.command:
+    cmd: ufw --force default deny
+  register: ufw_default_deny
+  changed_when: "'Default incoming policy changed to 'deny'' in ufw_default_deny.stdout"
+  failed_when: false
+- name: Allow SSH through UFW
+  ansible.builtin.command:
+    cmd: ufw allow ssh
+  register: ufw_allow_ssh
+  changed_when: "'Rule added' in ufw_allow_ssh.stdout"
+  failed_when: false
+- name: Allow HTTP through UFW
+  ansible.builtin.command:
+    cmd: ufw allow http
+  register: ufw_allow_http
+  changed_when: "'Rule added' in ufw_allow_http.stdout"
+  failed_when: false
+- name: Allow HTTPS through UFW
+  ansible.builtin.command:
+    cmd: ufw allow https
+  register: ufw_allow_https
+  changed_when: "'Rule added' in ufw_allow_https.stdout"
+  failed_when: false
+- name: Enable UFW
+  ansible.builtin.command:
+    cmd: ufw --force enable
+  register: ufw_enable
+  changed_when: "'Firewall is active and enabled on system startup' in ufw_enable.stdout"
+  failed_when: false
+- name: Configure kernel security parameters
+  ansible.builtin.template:
+    src: sysctl-security.conf.j2
+    dest: /etc/sysctl.d/99-security.conf
+    mode: "0644"
+  notify: Reload sysctl
+- name: Disable root login in SSH
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: ^#?PermitRootLogin
+    line: PermitRootLogin no
+  when: security.ssh.disable_root | bool
+  notify: Restart ssh
+- name: Disable password authentication in SSH
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: ^#?PasswordAuthentication
+    line: PasswordAuthentication no
+  when: not security.ssh.password_auth | bool
+  notify: Restart ssh
