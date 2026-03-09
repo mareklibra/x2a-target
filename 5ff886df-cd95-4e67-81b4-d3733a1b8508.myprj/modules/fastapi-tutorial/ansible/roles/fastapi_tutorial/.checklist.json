@@ -1,0 +1,93 @@
+{
+  "module_name": "fastapi_tutorial",
+  "items": [
+    {
+      "category": "structure",
+      "source_path": "N/A",
+      "target_path": "./ansible/roles/fastapi_tutorial/meta/main.yml",
+      "status": "pending",
+      "description": "Role metadata file",
+      "notes": ""
+    },
+    {
+      "category": "structure",
+      "source_path": "N/A",
+      "target_path": "./ansible/roles/fastapi_tutorial/handlers/main.yml",
+      "status": "complete",
+      "description": "Main handlers file",
+      "notes": "Created handlers file with systemd reload handler"
+    },
+    {
+      "category": "structure",
+      "source_path": "N/A",
+      "target_path": "./ansible/roles/fastapi_tutorial/defaults/main.yml",
+      "status": "complete",
+      "description": "Default variables file",
+      "notes": "Created defaults file with all required variables"
+    },
+    {
+      "category": "recipes",
+      "source_path": "cookbooks/fastapi-tutorial/recipes/default.rb",
+      "target_path": "./ansible/roles/fastapi_tutorial/tasks/main.yml",
+      "status": "complete",
+      "description": "Main recipe for FastAPI application deployment",
+      "notes": "Converted Chef recipe to Ansible tasks"
+    },
+    {
+      "category": "structure",
+      "source_path": "cookbooks/fastapi-tutorial/metadata.rb",
+      "target_path": "./ansible/roles/fastapi_tutorial/meta/main.yml",
+      "status": "complete",
+      "description": "Role metadata from Chef metadata",
+      "notes": "Created meta/main.yml from Chef metadata.rb"
+    },
+    {
+      "category": "templates",
+      "source_path": "N/A",
+      "target_path": "./ansible/roles/fastapi_tutorial/templates/env.j2",
+      "status": "complete",
+      "description": "Environment configuration file template",
+      "notes": "Created Jinja2 template for FastAPI environment configuration file"
+    },
+    {
+      "category": "templates",
+      "source_path": "N/A",
+      "target_path": "./ansible/roles/fastapi_tutorial/templates/fastapi-tutorial.service.j2",
+      "status": "complete",
+      "description": "Systemd service file template",
+      "notes": "Created Jinja2 template for FastAPI systemd service file"
+    },
+    {
+      "category": "dependencies",
+      "source_path": "collection:community.postgresql",
+      "target_path": "./ansible/roles/fastapi_tutorial/requirements.yml",
+      "status": "complete",
+      "description": "PostgreSQL database dependency",
+      "notes": "Added community.postgresql collection to requirements.yml"
+    },
+    {
+      "category": "dependencies",
+      "source_path": "collection:community.general",
+      "target_path": "./ansible/roles/fastapi_tutorial/requirements.yml",
+      "status": "complete",
+      "description": "Python package management dependency",
+      "notes": "Added community.general collection to requirements.yml"
+    },
+    {
+      "category": "dependencies",
+      "source_path": "collection:ansible.posix",
+      "target_path": "./ansible/roles/fastapi_tutorial/requirements.yml",
+      "status": "complete",
+      "description": "Git operations dependency",
+      "notes": "Added ansible.posix collection to requirements.yml"
+    },
+    {
+      "category": "structure",
+      "source_path": "N/A",
+      "target_path": "ansible/roles/fastapi_tutorial/meta/main.yml",
+      "status": "complete",
+      "description": "Created standard meta/main.yml",
+      "notes": ""
+    }
+  ]
+}
