@@ -1,0 +1,33 @@
+---
+- name: Install Redis server
+  ansible.builtin.package:
+    name: "{{ redis_package_name }}"
+    state: present
+  when: redis_install_type == 'package'
+- name: Create Redis user
+  ansible.builtin.user:
+    name: "{{ redis_user }}"
+    group: "{{ redis_group }}"
+    system: true
+    shell: /bin/false
+    home: /var/lib/redis
+    createhome: false
+  when: redis_install_type == 'source'
+- name: Download Redis source
+  ansible.builtin.get_url:
+    url: http://download.redis.io/releases/redis-{{ redis_version }}.tar.gz
+    dest: /tmp/redis-{{ redis_version }}.tar.gz
+    mode: "0644"
+  when: redis_install_type == 'source'
+- name: Extract Redis source
+  ansible.builtin.unarchive:
+    src: /tmp/redis-{{ redis_version }}.tar.gz
+    dest: /tmp
+    remote_src: true
+  when: redis_install_type == 'source'
+- name: Compile and install Redis
+  ansible.builtin.shell:
+    cmd: "cd /tmp/redis-{{ redis_version }}\nmake\nmake install\n"
+  args:
+    creates: /usr/local/bin/redis-server
+  when: redis_install_type == 'source'

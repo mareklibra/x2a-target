@@ -1,0 +1,7 @@
+---
+- name: Set Redis installation facts
+  ansible.builtin.set_fact:
+    redis_install_version: "{{ redis_version | default('6.2.6') }}"
+    redis_install_type: "{{ redis_install_method | default('package') }}"
+- name: Include Redis installation tasks
+  ansible.builtin.include_tasks: redis_install.yml

@@ -1,0 +1,7 @@
+---
+- name: Set Redis configuration facts
+  ansible.builtin.set_fact:
+    redis_config_settings: "{{ redis_instances | default([]) }}"
+- name: Configure Redis instances
+  ansible.builtin.include_tasks: redis_configure.yml
+  when: redis_config_settings | length > 0

@@ -1,0 +1,44 @@
+---
+- name: Create Redis configuration directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ redis_user }}"
+    group: "{{ redis_group }}"
+    mode: "0755"
+  loop:
+    - /etc/redis
+    - /var/run/redis
+    - /var/log/redis
+    - /var/lib/redis
+- name: Create Redis configuration file
+  ansible.builtin.template:
+    src: redis.conf.j2
+    dest: /etc/redis/{{ item.name }}.conf
+    owner: "{{ redis_user }}"
+    group: "{{ redis_group }}"
+    mode: "0644"
+  loop: "{{ redis_instances }}"
+  notify: restart redis
+- name: Create Redis init script
+  ansible.builtin.template:
+    src: redis.init.j2
+    dest: /etc/init.d/redis-{{ item.name }}
+    owner: root
+    group: root
+    mode: "0755"
+  loop: "{{ redis_instances }}"
+  when: ansible_service_mgr != 'systemd'
+  notify: restart redis
+- name: Create Redis systemd service file
+  ansible.builtin.template:
+    src: redis@.service.j2
+    dest: /etc/systemd/system/redis@{{ item.name }}.service
+    owner: root
+    group: root
+    mode: "0644"
+  loop: "{{ redis_instances }}"
+  when: ansible_service_mgr == 'systemd'
+  notify:
+    - reload systemd
+    - restart redis

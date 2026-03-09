@@ -1,0 +1,7 @@
+---
+- name: Install Redis prerequisites
+  ansible.builtin.package:
+    name:
+      - build-essential
+      - tcl
+    state: present

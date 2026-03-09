@@ -1,0 +1,7 @@
+---
+- name: Stop and disable default Redis service
+  ansible.builtin.service:
+    name: redis-server
+    state: stopped
+    enabled: false
+  ignore_errors: true

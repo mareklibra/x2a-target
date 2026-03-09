@@ -1,0 +1,16 @@
+---
+- name: Create Redis ulimit configuration
+  ansible.builtin.template:
+    src: redis_limits.conf.j2
+    dest: /etc/security/limits.d/redis.conf
+    owner: root
+    group: root
+    mode: "0644"
+  vars:
+    redis_ulimit: 65536
+- name: Configure PAM limits for Debian systems
+  ansible.builtin.lineinfile:
+    path: /etc/pam.d/common-session
+    line: session required pam_limits.so
+    state: present
+  when: ansible_os_family == "Debian"

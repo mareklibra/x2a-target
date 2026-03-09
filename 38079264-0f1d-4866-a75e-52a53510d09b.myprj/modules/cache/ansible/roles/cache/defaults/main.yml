@@ -1,0 +1,18 @@
+---
+memcached_memory: 64
+memcached_port: 11211
+memcached_listen: 0.0.0.0
+memcached_maxconn: 1024
+redis_instances:
+  - port: 6379
+    requirepass: redis_secure_password_123
+    unixsocket: /var/run/redis/6379/redis.sock
+    unixsocketperm: 755
+    logfile: /var/log/redis/redis-server.log
+    dir: /var/lib/redis
+redis_install_type: package
+redis_version: 6.0.9
+redis_package_name: redis-server
+redis_user: redis
+redis_group: redis
+redis_ulimit: 65536

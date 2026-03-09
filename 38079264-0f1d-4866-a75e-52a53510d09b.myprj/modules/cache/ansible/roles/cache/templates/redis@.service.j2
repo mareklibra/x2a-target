@@ -1,0 +1,20 @@
+[Unit]
+Description=Redis persistent key-value database
+After=network.target
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/redis-server /etc/redis/%i.conf
+ExecStop=/usr/bin/redis-cli -p %i shutdown
+TimeoutStopSec=0
+Restart=always
+User=redis
+Group=redis
+RuntimeDirectory=redis/%i
+RuntimeDirectoryMode=0755
+LimitNOFILE={{ redis_ulimit | default(65536) }}
+
+[Install]
+WantedBy=multi-user.target
