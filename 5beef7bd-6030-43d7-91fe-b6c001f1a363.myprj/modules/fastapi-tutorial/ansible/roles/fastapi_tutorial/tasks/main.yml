@@ -1,0 +1,82 @@
+---
+- name: Install required packages
+  ansible.builtin.package:
+    name: "{{ fastapi_python_packages }}"
+    state: present
+- name: Create application directory
+  ansible.builtin.file:
+    path: "{{ fastapi_app_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+- name: Clone FastAPI tutorial repository
+  ansible.builtin.git:
+    repo: "{{ fastapi_git_repo }}"
+    dest: "{{ fastapi_app_dir }}"
+    version: "{{ fastapi_git_branch }}"
+    update: true
+- name: Check if virtual environment exists
+  ansible.builtin.stat:
+    path: "{{ fastapi_app_dir }}/venv/bin/python"
+  register: venv_exists
+- name: Create Python virtual environment
+  ansible.builtin.command:
+    cmd: python3 -m venv {{ fastapi_app_dir }}/venv
+  when: not venv_exists.stat.exists
+  changed_when: true
+- name: Install Python dependencies
+  ansible.builtin.pip:
+    requirements: "{{ fastapi_app_dir }}/requirements.txt"
+    virtualenv: "{{ fastapi_app_dir }}/venv"
+    state: present
+- name: Enable and start PostgreSQL service
+  ansible.builtin.service:
+    name: postgresql
+    state: started
+    enabled: true
+- name: Check if database user exists
+  ansible.builtin.shell:
+    cmd: sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='{{ fastapi_db_user }}'"
+  register: db_user_exists
+  changed_when: false
+- name: Check if database exists
+  ansible.builtin.shell:
+    cmd: sudo -u postgres psql -tAc "SELECT 1 FROM pg_database WHERE datname='{{ fastapi_db_name }}'"
+  register: db_exists
+  changed_when: false
+- name: Create database user
+  ansible.builtin.shell:
+    cmd: sudo -u postgres psql -c "CREATE USER {{ fastapi_db_user }} WITH PASSWORD '{{ fastapi_db_password }}';"
+  when: db_user_exists.stdout == ""
+  changed_when: true
+- name: Create database
+  ansible.builtin.shell:
+    cmd: sudo -u postgres psql -c "CREATE DATABASE {{ fastapi_db_name }} OWNER {{ fastapi_db_user }};"
+  when: db_exists.stdout == ""
+  changed_when: true
+- name: Grant privileges on database
+  ansible.builtin.shell:
+    cmd: sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE {{ fastapi_db_name }} TO {{ fastapi_db_user }};"
+  when: db_exists.stdout == ""
+  changed_when: true
+- name: Create environment configuration file
+  ansible.builtin.template:
+    src: env.j2
+    dest: "{{ fastapi_app_dir }}/.env"
+    owner: root
+    group: root
+    mode: "0644"
+- name: Create systemd service file
+  ansible.builtin.template:
+    src: fastapi-tutorial.service.j2
+    dest: /etc/systemd/system/fastapi-tutorial.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Reload systemd daemon
+- name: Enable and start FastAPI service
+  ansible.builtin.service:
+    name: fastapi-tutorial
+    state: started
+    enabled: true
