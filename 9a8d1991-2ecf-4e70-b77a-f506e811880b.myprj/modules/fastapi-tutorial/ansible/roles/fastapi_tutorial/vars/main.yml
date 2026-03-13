@@ -1,3 +1,2 @@
 ---
-# This file contains variables that are not meant to be overridden
-# Add any variables here that should be fixed for this role
+# Variables that should not be overridden by users

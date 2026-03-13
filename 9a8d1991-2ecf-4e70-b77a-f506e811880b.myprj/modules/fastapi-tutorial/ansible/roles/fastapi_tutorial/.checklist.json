@@ -6,72 +6,80 @@
       "source_path": "cookbooks/fastapi-tutorial/metadata.rb",
       "target_path": "./ansible/roles/fastapi_tutorial/meta/main.yml",
       "status": "complete",
-      "description": "Role metadata file",
-      "notes": "Created meta/main.yml with role metadata"
+      "description": "Role metadata including dependencies and platform support",
+      "notes": "Created meta/main.yml with role metadata from Chef cookbook"
     },
     {
       "category": "structure",
       "source_path": "N/A",
-      "target_path": "./ansible/roles/fastapi_tutorial/handlers/main.yml",
+      "target_path": "./ansible/roles/fastapi_tutorial/tasks/main.yml",
       "status": "complete",
-      "description": "Main handlers file",
-      "notes": "Created handlers/main.yml with systemd reload and service restart handlers"
+      "description": "Main tasks file that imports all other task files",
+      "notes": "Created main tasks file that imports the install tasks"
     },
     {
       "category": "structure",
       "source_path": "N/A",
       "target_path": "./ansible/roles/fastapi_tutorial/defaults/main.yml",
       "status": "complete",
-      "description": "Default variables file",
-      "notes": "Created defaults/main.yml with all configurable variables"
+      "description": "Default variables for the role",
+      "notes": "Created defaults/main.yml with configurable variables for FastAPI application, Git repository, and database settings"
+    },
+    {
+      "category": "structure",
+      "source_path": "N/A",
+      "target_path": "./ansible/roles/fastapi_tutorial/handlers/main.yml",
+      "status": "complete",
+      "description": "Handlers for service restarts and notifications",
+      "notes": "Created handlers/main.yml with systemd reload handler"
     },
     {
       "category": "recipes",
       "source_path": "cookbooks/fastapi-tutorial/recipes/default.rb",
-      "target_path": "./ansible/roles/fastapi_tutorial/tasks/main.yml",
+      "target_path": "./ansible/roles/fastapi_tutorial/tasks/install.yml",
       "status": "complete",
-      "description": "Main recipe for FastAPI application deployment",
-      "notes": "Created tasks/main.yml with all required tasks from the Chef recipe"
+      "description": "Main recipe for FastAPI application setup",
+      "notes": "Created install tasks file with package installation, git clone, Python venv setup, PostgreSQL configuration, and service setup"
     },
     {
-      "category": "dependencies",
-      "source_path": "collection:ansible.posix",
-      "target_path": "./ansible/roles/fastapi_tutorial/requirements.yml",
+      "category": "templates",
+      "source_path": "N/A",
+      "target_path": "./ansible/roles/fastapi_tutorial/templates/env.j2",
       "status": "complete",
-      "description": "Python package management",
-      "notes": "Added ansible.posix collection to requirements.yml"
+      "description": "Environment configuration file template",
+      "notes": "Created environment file template with variables for project name, API version, and database connection"
+    },
+    {
+      "category": "templates",
+      "source_path": "N/A",
+      "target_path": "./ansible/roles/fastapi_tutorial/templates/fastapi-tutorial.service.j2",
+      "status": "complete",
+      "description": "Systemd service file template",
+      "notes": "Created systemd service template with variables for service user, app path, host, and port"
     },
     {
       "category": "dependencies",
       "source_path": "collection:community.postgresql",
       "target_path": "./ansible/roles/fastapi_tutorial/requirements.yml",
       "status": "complete",
-      "description": "PostgreSQL database management",
-      "notes": "Added community.postgresql collection to requirements.yml"
+      "description": "PostgreSQL database dependency",
+      "notes": "Created requirements.yml with community.postgresql and ansible.posix collections"
     },
     {
       "category": "dependencies",
-      "source_path": "collection:ansible.builtin",
+      "source_path": "collection:ansible.posix",
       "target_path": "./ansible/roles/fastapi_tutorial/requirements.yml",
       "status": "complete",
-      "description": "Git repository management",
-      "notes": "ansible.builtin is included by default in Ansible, no need to add to requirements.yml"
+      "description": "General utilities collection",
+      "notes": "Added ansible.posix collection to requirements.yml"
     },
     {
-      "category": "files",
+      "category": "structure",
       "source_path": "N/A",
-      "target_path": "./ansible/roles/fastapi_tutorial/templates/env.j2",
+      "target_path": "./ansible/roles/fastapi_tutorial/vars/main.yml",
       "status": "complete",
-      "description": "FastAPI environment configuration file",
-      "notes": "Created env.j2 template for application environment configuration"
-    },
-    {
-      "category": "files",
-      "source_path": "N/A",
-      "target_path": "./ansible/roles/fastapi_tutorial/templates/fastapi-tutorial.service.j2",
-      "status": "complete",
-      "description": "FastAPI systemd service file",
-      "notes": "Created fastapi-tutorial.service.j2 template for systemd service configuration"
+      "description": "Variable file for database credentials",
+      "notes": "Created vars/main.yml with placeholder for non-overridable variables"
     },
     {
       "category": "structure",

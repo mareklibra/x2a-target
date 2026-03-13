@@ -13,5 +13,9 @@ galaxy_info:
     - name: EL
       versions:
         - "7"
-  galaxy_tags: []
+  galaxy_tags:
+    - fastapi
+    - python
+    - web
+    - postgresql
 dependencies: []
