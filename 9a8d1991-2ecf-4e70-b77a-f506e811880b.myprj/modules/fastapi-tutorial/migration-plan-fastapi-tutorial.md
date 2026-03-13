@@ -1,6 +1,6 @@
 # Migration Plan: fastapi-tutorial
 
-**TLDR**: This cookbook deploys a FastAPI Python web application with a PostgreSQL database backend. It sets up a single instance of the application that runs on port 8000, with a dedicated PostgreSQL database.
+**TLDR**: This cookbook installs and configures a FastAPI Python web application with PostgreSQL database. It sets up a single FastAPI instance running on port 8000, with a dedicated PostgreSQL database, Python virtual environment, and systemd service.
 
 ## Service Type and Instances
 
@@ -12,15 +12,9 @@
   - Location/Path: /opt/fastapi-tutorial
   - Port/Socket: 8000
   - Key Config: 
-    - Database URL: postgresql://fastapi:fastapi_password@localhost/fastapi_db
-    - Project Name: "FastAPI Tutorial"
-    - API Version: 1.0.0
-
-- **PostgreSQL Database**: Database backend for the FastAPI application
-  - Database Name: fastapi_db
-  - User: fastapi
-  - Password: fastapi_password
-  - Location: Default PostgreSQL installation path
+    - Database: PostgreSQL (fastapi_db)
+    - Database User: fastapi
+    - Environment Variables: PROJECT_NAME, API_VERSION, DATABASE_URL
 
 ## File Structure
 
@@ -36,39 +30,38 @@ The cookbook performs operations in this order:
 1. **default** (`cookbooks/fastapi-tutorial/recipes/default.rb`):
    - Installs Python 3 and required system packages: python3, python3-pip, python3-venv, git, postgresql, postgresql-contrib, libpq-dev
    - Creates application directory: /opt/fastapi-tutorial
-   - Clones FastAPI tutorial repository from GitHub (https://github.com/dibanez/fastapi_tutorial.git, branch: main)
+   - Clones FastAPI tutorial repository from github.com/dibanez/fastapi_tutorial.git (branch: main)
    - Creates Python virtual environment at /opt/fastapi-tutorial/venv
    - Installs Python dependencies from requirements.txt
-   - Configures PostgreSQL service (enables and starts)
-   - Creates database user 'fastapi' with password 'fastapi_password'
-   - Creates database 'fastapi_db' owned by 'fastapi' user
-   - Grants all privileges on 'fastapi_db' to 'fastapi' user
-   - Creates environment configuration file at /opt/fastapi-tutorial/.env with database connection details
-   - Creates systemd service file at /etc/systemd/system/fastapi-tutorial.service
-   - Reloads systemd daemon when service file changes
-   - Enables and starts the fastapi-tutorial service
-   - Resources: package (1), directory (1), git (1), execute (3), service (2), file (2)
+   - Enables and starts PostgreSQL service
+   - Creates PostgreSQL database (fastapi_db) and user (fastapi) with password
+   - Creates environment file (.env) with configuration variables
+   - Creates systemd service file for the FastAPI application
+   - Enables and starts the FastAPI service
+   - Resources: package (7), directory (1), git (1), execute (3), service (2), file (2)
 
 ## Dependencies
 
 **External cookbook dependencies**: None specified in metadata.rb
 **System package dependencies**: python3, python3-pip, python3-venv, git, postgresql, postgresql-contrib, libpq-dev
-**Service dependencies**: postgresql.service (required for fastapi-tutorial.service)
+**Service dependencies**: postgresql.service (required for FastAPI service)
 
 ## Checks for the Migration
 
 **Files to verify**:
-- /opt/fastapi-tutorial (application directory)
-- /opt/fastapi-tutorial/venv (Python virtual environment)
+- /opt/fastapi-tutorial/ (application directory)
+- /opt/fastapi-tutorial/venv/ (Python virtual environment)
 - /opt/fastapi-tutorial/.env (environment configuration)
 - /etc/systemd/system/fastapi-tutorial.service (systemd service file)
 
 **Service endpoints to check**:
-- Ports listening: 8000 (FastAPI application), 5432 (PostgreSQL)
-- Network interfaces: 0.0.0.0 (FastAPI application listens on all interfaces)
+- Ports listening: 8000 (FastAPI application)
+- PostgreSQL: 5432 (default PostgreSQL port)
 
 **Templates rendered**:
-- No templates are used in this cookbook. Configuration is generated directly in file resources.
+- No templates used, but file resources create:
+  - /opt/fastapi-tutorial/.env
+  - /etc/systemd/system/fastapi-tutorial.service
 
 ## Pre-flight checks:
 ```bash
@@ -76,13 +69,13 @@ The cookbook performs operations in this order:
 systemctl status fastapi-tutorial
 systemctl status postgresql
 
-# Process verification
+# Process checks
 ps aux | grep uvicorn
-ps aux | grep postgres
+ps aux | grep fastapi
 
-# Application health check
+# Application health
 curl -I http://localhost:8000/
-curl -s http://localhost:8000/docs  # FastAPI auto-generated documentation
+curl -s http://localhost:8000/docs  # FastAPI auto-generated docs
 
 # Database connectivity
 sudo -u postgres psql -c "\l" | grep fastapi_db
@@ -97,8 +90,7 @@ grep ExecStart /etc/systemd/system/fastapi-tutorial.service
 # Python environment
 ls -la /opt/fastapi-tutorial/venv/bin/
 /opt/fastapi-tutorial/venv/bin/python --version
-/opt/fastapi-tutorial/venv/bin/pip list | grep fastapi
-/opt/fastapi-tutorial/venv/bin/pip list | grep uvicorn
+/opt/fastapi-tutorial/venv/bin/pip list
 
 # Git repository
 cd /opt/fastapi-tutorial && git remote -v
@@ -111,10 +103,13 @@ journalctl -u postgresql -n 50
 # Network listening
 netstat -tulpn | grep 8000
 ss -tlnp | grep 8000
+lsof -i :8000
+
+# PostgreSQL listening
 netstat -tulpn | grep 5432
 ss -tlnp | grep postgres
 
 # Resource usage
 ps aux | grep uvicorn | grep -v grep
-top -p $(pgrep -f uvicorn) -n 1
+top -p $(pgrep uvicorn) -n 1
 ```
