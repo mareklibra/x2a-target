@@ -1,69 +1,64 @@
 ---
-- name: Install Python 3 and required system packages
+- name: Install required system packages
   ansible.builtin.package:
-    name:
-      - python3
-      - python3-pip
-      - python3-venv
-      - git
-      - postgresql
-      - postgresql-contrib
-      - libpq-dev
+    name: "{{ fastapi_system_packages }}"
     state: present
 - name: Create application directory
   ansible.builtin.file:
-    path: /opt/fastapi-tutorial
+    path: "{{ fastapi_app_dir }}"
+    state: directory
     owner: root
     group: root
     mode: "0755"
-    state: directory
-    recurse: true
 - name: Clone FastAPI tutorial repository
   ansible.builtin.git:
-    repo: https://github.com/dibanez/fastapi_tutorial.git
-    dest: /opt/fastapi-tutorial
-    version: main
+    repo: "{{ fastapi_git_repo }}"
+    dest: "{{ fastapi_app_dir }}"
+    version: "{{ fastapi_git_branch }}"
+    force: true
 - name: Create Python virtual environment
   ansible.builtin.command:
-    cmd: python3 -m venv /opt/fastapi-tutorial/venv
-    creates: /opt/fastapi-tutorial/venv
+    cmd: python3 -m venv {{ fastapi_python_venv }}
+    creates: "{{ fastapi_python_venv }}"
 - name: Install Python dependencies
   ansible.builtin.pip:
-    requirements: /opt/fastapi-tutorial/requirements.txt
-    virtualenv: /opt/fastapi-tutorial/venv
+    requirements: "{{ fastapi_app_dir }}/requirements.txt"
+    virtualenv: "{{ fastapi_python_venv }}"
     state: present
-- name: Configure PostgreSQL service
+- name: Ensure PostgreSQL service is enabled and started
   ansible.builtin.service:
     name: postgresql
-    enabled: true
     state: started
-- name: Create database user and database
-  ansible.builtin.shell:
-    cmd: 'sudo -u postgres psql -c "CREATE USER fastapi WITH PASSWORD ''fastapi_password'';" || true
-
-      sudo -u postgres psql -c "CREATE DATABASE fastapi_db OWNER fastapi;" || true
-
-      sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE fastapi_db TO fastapi;" || true
-
-      '
+    enabled: true
+- name: Create PostgreSQL user
+  ansible.builtin.command:
+    cmd: sudo -u postgres psql -c "CREATE USER {{ fastapi_db_user }} WITH PASSWORD '{{ fastapi_db_password }}';" || true
+  changed_when: false
+- name: Create PostgreSQL database
+  ansible.builtin.command:
+    cmd: sudo -u postgres psql -c "CREATE DATABASE {{ fastapi_db_name }} OWNER {{ fastapi_db_user }};" || true
+  changed_when: false
+- name: Grant privileges on database
+  ansible.builtin.command:
+    cmd: sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE {{ fastapi_db_name }} TO {{ fastapi_db_user }};" || true
   changed_when: false
 - name: Create environment configuration file
   ansible.builtin.template:
     src: env.j2
-    dest: /opt/fastapi-tutorial/.env
-    mode: "0644"
+    dest: "{{ fastapi_app_dir }}/.env"
     owner: root
     group: root
+    mode: "0644"
 - name: Create systemd service file
   ansible.builtin.template:
     src: fastapi-tutorial.service.j2
     dest: /etc/systemd/system/fastapi-tutorial.service
-    mode: "0644"
     owner: root
     group: root
+    mode: "0644"
   notify: Reload systemd daemon
-- name: Enable and start the FastAPI tutorial service
+- name: Enable and start FastAPI tutorial service
   ansible.builtin.service:
     name: fastapi-tutorial
-    enabled: true
     state: started
+    enabled: true

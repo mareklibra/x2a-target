@@ -5,9 +5,9 @@ After=network.target postgresql.service
 [Service]
 Type=simple
 User=root
-WorkingDirectory=/opt/fastapi-tutorial
-Environment="PATH=/opt/fastapi-tutorial/venv/bin"
-ExecStart=/opt/fastapi-tutorial/venv/bin/uvicorn app.main:app --host {{ app_host }} --port {{ app_port }}
+WorkingDirectory={{ fastapi_app_dir }}
+Environment="PATH={{ fastapi_python_venv }}/bin"
+ExecStart={{ fastapi_python_venv }}/bin/uvicorn app.main:app --host {{ fastapi_app_host }} --port {{ fastapi_app_port }}
 Restart=always
 
 [Install]

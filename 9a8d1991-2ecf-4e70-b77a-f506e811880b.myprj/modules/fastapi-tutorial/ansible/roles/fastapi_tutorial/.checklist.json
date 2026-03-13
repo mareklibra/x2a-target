@@ -7,7 +7,7 @@
       "target_path": "./ansible/roles/fastapi_tutorial/meta/main.yml",
       "status": "complete",
       "description": "Role metadata file",
-      "notes": "Created meta/main.yml from metadata.rb"
+      "notes": "Created meta/main.yml with role metadata"
     },
     {
       "category": "structure",
@@ -15,7 +15,7 @@
       "target_path": "./ansible/roles/fastapi_tutorial/handlers/main.yml",
       "status": "complete",
       "description": "Main handlers file",
-      "notes": "Created handlers file with systemd reload handler"
+      "notes": "Created handlers/main.yml with systemd reload and service restart handlers"
     },
     {
       "category": "structure",
@@ -23,15 +23,39 @@
       "target_path": "./ansible/roles/fastapi_tutorial/defaults/main.yml",
       "status": "complete",
       "description": "Default variables file",
-      "notes": "Created defaults file with configurable variables"
+      "notes": "Created defaults/main.yml with all configurable variables"
     },
     {
       "category": "recipes",
       "source_path": "cookbooks/fastapi-tutorial/recipes/default.rb",
       "target_path": "./ansible/roles/fastapi_tutorial/tasks/main.yml",
       "status": "complete",
-      "description": "Main recipe that installs and configures FastAPI application and PostgreSQL",
-      "notes": "Converted Chef recipe to Ansible tasks"
+      "description": "Main recipe for FastAPI application deployment",
+      "notes": "Created tasks/main.yml with all required tasks from the Chef recipe"
+    },
+    {
+      "category": "dependencies",
+      "source_path": "collection:ansible.posix",
+      "target_path": "./ansible/roles/fastapi_tutorial/requirements.yml",
+      "status": "complete",
+      "description": "Python package management",
+      "notes": "Added ansible.posix collection to requirements.yml"
+    },
+    {
+      "category": "dependencies",
+      "source_path": "collection:community.postgresql",
+      "target_path": "./ansible/roles/fastapi_tutorial/requirements.yml",
+      "status": "complete",
+      "description": "PostgreSQL database management",
+      "notes": "Added community.postgresql collection to requirements.yml"
+    },
+    {
+      "category": "dependencies",
+      "source_path": "collection:ansible.builtin",
+      "target_path": "./ansible/roles/fastapi_tutorial/requirements.yml",
+      "status": "complete",
+      "description": "Git repository management",
+      "notes": "ansible.builtin is included by default in Ansible, no need to add to requirements.yml"
     },
     {
       "category": "files",
@@ -39,7 +63,7 @@
       "target_path": "./ansible/roles/fastapi_tutorial/templates/env.j2",
       "status": "complete",
       "description": "FastAPI environment configuration file",
-      "notes": "Created environment file template"
+      "notes": "Created env.j2 template for application environment configuration"
     },
     {
       "category": "files",
@@ -47,31 +71,7 @@
       "target_path": "./ansible/roles/fastapi_tutorial/templates/fastapi-tutorial.service.j2",
       "status": "complete",
       "description": "FastAPI systemd service file",
-      "notes": "Created systemd service template"
-    },
-    {
-      "category": "dependencies",
-      "source_path": "collection:community.postgresql",
-      "target_path": "./ansible/roles/fastapi_tutorial/requirements.yml",
-      "status": "complete",
-      "description": "PostgreSQL database dependency",
-      "notes": "Added community.postgresql collection requirement"
-    },
-    {
-      "category": "dependencies",
-      "source_path": "collection:ansible.posix",
-      "target_path": "./ansible/roles/fastapi_tutorial/requirements.yml",
-      "status": "complete",
-      "description": "General utilities collection",
-      "notes": "Added ansible.posix collection requirement"
-    },
-    {
-      "category": "structure",
-      "source_path": "N/A",
-      "target_path": "./ansible/roles/fastapi_tutorial/vars/main.yml",
-      "status": "complete",
-      "description": "Variables for FastAPI and PostgreSQL configuration",
-      "notes": "Created vars file for non-overridable variables"
+      "notes": "Created fastapi-tutorial.service.j2 template for systemd service configuration"
     },
     {
       "category": "structure",
