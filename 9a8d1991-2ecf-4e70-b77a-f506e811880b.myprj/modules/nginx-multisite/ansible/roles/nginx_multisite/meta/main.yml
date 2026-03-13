@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  role_name: nginx_multisite
+  author: DevOps Team
+  description: Configures Nginx with multiple virtual hosts and security settings
+  license: Apache-2.0
+  min_ansible_version: "2.9"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - bionic
+        - focal
+  galaxy_tags:
+    - nginx
+    - web
+    - security
+    - ssl
+dependencies: []
