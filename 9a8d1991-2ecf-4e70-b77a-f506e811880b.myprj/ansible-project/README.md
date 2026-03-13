@@ -57,6 +57,56 @@ ansible-playbook playbooks/run_cache.yml -i inventory/hosts.yml
 
 
 
+### fastapi_tutorial
+
+
+Configures FastAPI tutorial application with PostgreSQL
+
+
+**Target platforms:** Ubuntu, EL
+
+
+Run this role:
+
+```bash
+ansible-playbook playbooks/run_fastapi_tutorial.yml -i inventory/hosts.yml
+```
+
+
+**Default variables** (override in inventory or extra vars):
+
+| Variable | Default |
+|----------|---------|
+
+| `fastapi_project_name` | `FastAPI Tutorial` |
+
+| `fastapi_api_version` | `1.0.0` |
+
+| `fastapi_app_path` | `/opt/fastapi-tutorial` |
+
+| `fastapi_service_user` | `root` |
+
+| `fastapi_service_group` | `root` |
+
+| `fastapi_host` | `0.0.0.0` |
+
+| `fastapi_port` | `8000` |
+
+| `fastapi_git_repo` | `https://github.com/dibanez/fastapi_tutorial.git` |
+
+| `fastapi_git_branch` | `main` |
+
+| `fastapi_db_host` | `localhost` |
+
+| `fastapi_db_name` | `fastapi_db` |
+
+| `fastapi_db_user` | `fastapi` |
+
+| `fastapi_db_password` | `fastapi_password` |
+
+
+
+
 ## Prerequisites
 
 ### Collections
