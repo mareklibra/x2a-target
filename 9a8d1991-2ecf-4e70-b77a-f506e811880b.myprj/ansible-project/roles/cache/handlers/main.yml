@@ -1,0 +1,14 @@
+---
+- name: restart redis
+  ansible.builtin.service:
+    name: "{{ item.service_name }}"
+    state: restarted
+  loop:
+    - service_name: redis@{{ item.port }}
+      when: redis_init_system == 'systemd'
+    - service_name: redis{{ item.port }}
+      when: redis_init_system != 'systemd'
+  loop_control:
+    label: "{{ item.service_name }}"
+  when: item.when | bool
+  listen: restart redis

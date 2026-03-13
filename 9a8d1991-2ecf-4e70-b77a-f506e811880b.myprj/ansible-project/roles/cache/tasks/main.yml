@@ -1,0 +1,27 @@
+---
+- name: Include Redis variables
+  ansible.builtin.include_vars: redis.yml
+  tags:
+    - always
+- name: Disable OS default Redis service
+  include_tasks: redis_disable_default.yml
+  when: redis_disable_os_default | bool
+  tags:
+    - redis
+    - service
+- name: Install Redis
+  include_tasks: redis_install.yml
+  tags:
+    - redis
+    - install
+- name: Configure Redis
+  include_tasks: redis_configure.yml
+  tags:
+    - redis
+    - config
+- name: Enable Redis services
+  include_tasks: redis_enable.yml
+  when: redis_enable_service | bool
+  tags:
+    - redis
+    - service

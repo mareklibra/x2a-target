@@ -1,0 +1,76 @@
+---
+- name: Install Redis dependencies
+  ansible.builtin.package:
+    name: "{{ redis_dependencies }}"
+    state: present
+  tags:
+    - redis
+    - package
+- name: Create Redis user
+  ansible.builtin.user:
+    name: "{{ redis_user }}"
+    system: true
+    group: "{{ redis_group }}"
+    home: "{{ redis_data_dir }}"
+    shell: /bin/false
+    comment: Redis Server
+    createhome: false
+  tags:
+    - redis
+    - user
+- name: Create Redis group
+  ansible.builtin.group:
+    name: "{{ redis_group }}"
+    system: true
+  tags:
+    - redis
+    - user
+- name: Install Redis from package
+  ansible.builtin.package:
+    name: "{{ redis_package_name }}"
+    state: present
+  when: redis_package_install | bool
+  tags:
+    - redis
+    - package
+- name: Install Redis from source
+  block:
+    - name: Create temporary directory for Redis source
+      ansible.builtin.file:
+        path: /tmp/redis-source
+        state: directory
+        mode: "0755"
+    - name: Download Redis source
+      ansible.builtin.get_url:
+        url: http://download.redis.io/releases/redis-{{ redis_version }}.tar.gz
+        dest: /tmp/redis-source/redis-{{ redis_version }}.tar.gz
+        mode: "0644"
+    - name: Extract Redis source
+      ansible.builtin.unarchive:
+        src: /tmp/redis-source/redis-{{ redis_version }}.tar.gz
+        dest: /tmp/redis-source
+        remote_src: true
+        creates: /tmp/redis-source/redis-{{ redis_version }}/Makefile
+    - name: Compile and install Redis
+      ansible.builtin.shell:
+        cmd: "cd /tmp/redis-source/redis-{{ redis_version }}\nmake\nmake install PREFIX=/usr/local\n"
+        creates: /usr/local/bin/redis-server
+    - name: Create Redis directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ redis_user }}"
+        group: "{{ redis_group }}"
+        mode: "{{ redis_dir_mode }}"
+      loop:
+        - "{{ redis_conf_dir }}"
+        - "{{ redis_log_dir }}"
+        - "{{ redis_data_dir }}"
+    - name: Clean up temporary files
+      ansible.builtin.file:
+        path: /tmp/redis-source
+        state: absent
+  when: not redis_package_install | bool
+  tags:
+    - redis
+    - package

@@ -1,0 +1,12 @@
+---
+memcached_package_name: memcached
+memcached_service_name: memcached
+memcached_memory: 64
+memcached_port: 11211
+memcached_udp_port: 11211
+memcached_listen: 0.0.0.0
+memcached_max_connections: 1024
+memcached_max_object_size: 1m
+memcached_logfile: /var/log/memcached.log
+memcached_verbosity: ""
+memcached_extra_options: []
