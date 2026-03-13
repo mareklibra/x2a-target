@@ -1,0 +1,34 @@
+---
+- name: Create Redis ulimit configuration file
+  ansible.builtin.template:
+    src: redis-limits.conf.j2
+    dest: /etc/security/limits.d/redis.conf
+    owner: root
+    group: root
+    mode: "0644"
+  tags:
+    - redis
+    - config
+- name: Create Redis systemd service override directory
+  ansible.builtin.file:
+    path: /etc/systemd/system/redis@.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  when: redis_init_system == 'systemd'
+  tags:
+    - redis
+    - config
+- name: Create Redis systemd service override file
+  ansible.builtin.template:
+    src: redis-systemd-override.conf.j2
+    dest: /etc/systemd/system/redis@.service.d/override.conf
+    owner: root
+    group: root
+    mode: "0644"
+  when: redis_init_system == 'systemd'
+  notify: restart redis
+  tags:
+    - redis
+    - config

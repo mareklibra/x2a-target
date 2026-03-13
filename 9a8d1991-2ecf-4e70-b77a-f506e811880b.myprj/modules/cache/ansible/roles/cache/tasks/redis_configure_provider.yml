@@ -1,0 +1,48 @@
+---
+- name: Ensure Redis configuration directory exists
+  ansible.builtin.file:
+    path: "{{ redis_conf_dir }}"
+    state: directory
+    owner: "{{ redis_user }}"
+    group: "{{ redis_group }}"
+    mode: "{{ redis_dir_mode }}"
+  tags:
+    - redis
+    - config
+- name: Ensure Redis data directory exists
+  ansible.builtin.file:
+    path: "{{ item.dir | default(redis_data_dir) }}"
+    state: directory
+    owner: "{{ redis_user }}"
+    group: "{{ redis_group }}"
+    mode: "{{ redis_dir_mode }}"
+  loop: "{{ redis_servers }}"
+  loop_control:
+    label: "{{ item.port }}"
+  tags:
+    - redis
+    - config
+- name: Ensure Redis log directory exists
+  ansible.builtin.file:
+    path: "{{ redis_log_dir }}"
+    state: directory
+    owner: "{{ redis_user }}"
+    group: "{{ redis_group }}"
+    mode: "{{ redis_dir_mode }}"
+  tags:
+    - redis
+    - config
+- name: Create Redis configuration files
+  ansible.builtin.template:
+    src: redis.conf.j2
+    dest: "{{ redis_conf_dir }}/{{ item.port }}.conf"
+    owner: "{{ redis_user }}"
+    group: "{{ redis_group }}"
+    mode: "0640"
+  loop: "{{ redis_servers }}"
+  loop_control:
+    label: "{{ item.port }}"
+  notify: restart redis
+  tags:
+    - redis
+    - config

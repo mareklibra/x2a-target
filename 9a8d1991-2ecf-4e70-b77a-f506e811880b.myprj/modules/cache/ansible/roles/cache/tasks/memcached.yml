@@ -1,0 +1,27 @@
+---
+- name: Install memcached package
+  ansible.builtin.package:
+    name: "{{ memcached_package_name }}"
+    state: present
+  tags:
+    - memcached
+    - package
+- name: Create memcached configuration
+  ansible.builtin.template:
+    src: memcached.conf.j2
+    dest: /etc/memcached.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: restart memcached
+  tags:
+    - memcached
+    - config
+- name: Ensure memcached service is enabled and running
+  ansible.builtin.service:
+    name: "{{ memcached_service_name }}"
+    state: started
+    enabled: true
+  tags:
+    - memcached
+    - service

@@ -1,0 +1,84 @@
+#!/bin/sh
+#
+# Redis init script for Debian-based systems
+#
+### BEGIN INIT INFO
+# Provides:          redis{{ item.port }}
+# Required-Start:    $network $local_fs $remote_fs
+# Required-Stop:     $network $local_fs $remote_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Redis data structure server
+# Description:       Redis is an open source, advanced key-value store.
+### END INIT INFO
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+DAEMON=/usr/local/bin/redis-server
+DAEMON_ARGS={{ redis_conf_dir }}/{{ item.port }}.conf
+NAME=redis{{ item.port }}
+DESC=redis-server
+PIDFILE=/var/run/redis/{{ item.port }}.pid
+LOGFILE={{ item.logfile | default('/var/log/redis/redis_' + item.port + '.log') }}
+
+test -x $DAEMON || exit 0
+
+set -e
+
+case "$1" in
+  start)
+    echo -n "Starting $DESC: "
+    mkdir -p /var/run/redis
+    touch $LOGFILE
+    chown {{ redis_user }}:{{ redis_group }} $LOGFILE
+    chmod 755 /var/run/redis
+    if start-stop-daemon --start --quiet --umask 007 --pidfile $PIDFILE --chuid {{ redis_user }}:{{ redis_group }} --exec $DAEMON -- $DAEMON_ARGS
+    then
+        echo "$NAME."
+    else
+        echo "failed"
+    fi
+    ;;
+  stop)
+    echo -n "Stopping $DESC: "
+    if [ ! -f $PIDFILE ]
+    then
+      echo "$NAME not running."
+    else
+      PID=$(cat $PIDFILE)
+      /usr/local/bin/redis-cli -p {{ item.port }} shutdown
+      while [ -x /proc/${PID} ]
+      do
+        echo "Waiting for Redis to shutdown ..."
+        sleep 1
+      done
+      echo "$NAME."
+    fi
+    ;;
+  restart|force-reload)
+    ${0} stop
+    ${0} start
+    ;;
+  status)
+    echo -n "$DESC is "
+    if [ ! -f $PIDFILE ]
+    then
+      echo "not running."
+      exit 1
+    fi
+    PID=$(cat $PIDFILE)
+    if [ -x /proc/${PID} ]
+    then
+      echo "running."
+      exit 0
+    else
+      echo "not running."
+      exit 1
+    fi
+    ;;
+  *)
+    echo "Usage: /etc/init.d/$NAME {start|stop|restart|force-reload|status}" >&2
+    exit 1
+    ;;
+esac
+
+exit 0

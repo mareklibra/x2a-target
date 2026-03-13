@@ -1,0 +1,33 @@
+---
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+  when: ansible_os_family == "Debian"
+  tags:
+    - redis
+    - package
+- name: Include Redis prerequisites tasks
+  ansible.builtin.import_tasks: redis_prereqs.yml
+  tags:
+    - redis
+    - package
+- name: Include Redis installation tasks
+  ansible.builtin.import_tasks: redis_install.yml
+  tags:
+    - redis
+    - package
+- name: Include Redis ulimit tasks
+  ansible.builtin.import_tasks: redis_ulimit.yml
+  tags:
+    - redis
+    - config
+- name: Include Redis disable default tasks
+  ansible.builtin.import_tasks: redis_disable_default.yml
+  tags:
+    - redis
+    - service
+- name: Include Redis configuration tasks
+  ansible.builtin.import_tasks: redis_configure.yml
+  tags:
+    - redis
+    - config

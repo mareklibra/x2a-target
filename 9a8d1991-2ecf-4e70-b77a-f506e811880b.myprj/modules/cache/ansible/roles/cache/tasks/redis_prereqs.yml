@@ -1,0 +1,32 @@
+---
+- name: Install Redis prerequisites packages for Debian/Ubuntu
+  ansible.builtin.apt:
+    name:
+      - build-essential
+      - tcl
+    state: present
+  when: ansible_os_family == "Debian"
+  tags:
+    - redis
+    - package
+- name: Install Redis prerequisites packages for RedHat/CentOS
+  ansible.builtin.yum:
+    name:
+      - gcc
+      - make
+      - tcl
+    state: present
+  when: ansible_os_family == "RedHat"
+  tags:
+    - redis
+    - package
+- name: Ensure Redis user exists
+  ansible.builtin.user:
+    name: "{{ redis_user }}"
+    group: "{{ redis_group }}"
+    home: "{{ redis_homedir }}"
+    shell: "{{ redis_shell }}"
+    system: true
+  tags:
+    - redis
+    - config

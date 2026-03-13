@@ -1,0 +1,37 @@
+---
+- name: Enable and start Redis services (systemd)
+  ansible.builtin.systemd:
+    name: redis@{{ item.port }}
+    state: started
+    enabled: true
+  loop: "{{ redis_servers }}"
+  loop_control:
+    label: "{{ item.port }}"
+  when: redis_init_system == 'systemd'
+  tags:
+    - redis
+    - service
+- name: Enable and start Redis services (init)
+  ansible.builtin.service:
+    name: redis{{ item.port }}
+    state: started
+    enabled: true
+  loop: "{{ redis_servers }}"
+  loop_control:
+    label: "{{ item.port }}"
+  when: redis_init_system == 'init'
+  tags:
+    - redis
+    - service
+- name: Enable and start Redis services (upstart)
+  ansible.builtin.service:
+    name: redis{{ item.port }}
+    state: started
+    enabled: true
+  loop: "{{ redis_servers }}"
+  loop_control:
+    label: "{{ item.port }}"
+  when: redis_init_system == 'upstart'
+  tags:
+    - redis
+    - service

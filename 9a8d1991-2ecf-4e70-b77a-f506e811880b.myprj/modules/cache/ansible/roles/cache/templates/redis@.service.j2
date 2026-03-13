@@ -1,0 +1,17 @@
+[Unit]
+Description=Redis persistent key-value database
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/redis-server {{ redis_conf_dir }}/%i.conf
+ExecStop=/usr/local/bin/redis-cli -p %i shutdown
+User={{ redis_user }}
+Group={{ redis_group }}
+RuntimeDirectory=redis
+RuntimeDirectoryMode=0755
+Type=simple
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

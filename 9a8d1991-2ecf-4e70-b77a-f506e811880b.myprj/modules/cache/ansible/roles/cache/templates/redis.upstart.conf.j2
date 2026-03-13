@@ -1,0 +1,17 @@
+description "Redis Server {{ item.port }}"
+
+start on runlevel [23]
+stop on shutdown
+
+respawn
+respawn limit 10 5
+
+setuid {{ redis_user }}
+setgid {{ redis_group }}
+
+pre-start script
+  mkdir -p /var/run/redis
+  chown {{ redis_user }}:{{ redis_group }} /var/run/redis
+end script
+
+exec /usr/local/bin/redis-server {{ redis_conf_dir }}/{{ item.port }}.conf

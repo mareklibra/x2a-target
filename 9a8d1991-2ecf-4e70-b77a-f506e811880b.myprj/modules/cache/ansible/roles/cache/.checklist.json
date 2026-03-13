@@ -1,0 +1,229 @@
+{
+  "module_name": "cache",
+  "items": [
+    {
+      "category": "structure",
+      "source_path": "cookbooks/cache/metadata.rb",
+      "target_path": "./ansible/roles/cache/meta/main.yml",
+      "status": "complete",
+      "description": "Role metadata file",
+      "notes": "Created meta/main.yml with role metadata from the Chef cookbook"
+    },
+    {
+      "category": "structure",
+      "source_path": "N/A",
+      "target_path": "./ansible/roles/cache/handlers/main.yml",
+      "status": "complete",
+      "description": "Main handlers file",
+      "notes": "Created handlers/main.yml with restart handlers for memcached and redis services"
+    },
+    {
+      "category": "structure",
+      "source_path": "N/A",
+      "target_path": "./ansible/roles/cache/defaults/main.yml",
+      "status": "complete",
+      "description": "Default variables file",
+      "notes": "Created defaults/main.yml with combined defaults for memcached and redis"
+    },
+    {
+      "category": "recipes",
+      "source_path": "cookbooks/cache/recipes/default.rb",
+      "target_path": "./ansible/roles/cache/tasks/main.yml",
+      "status": "complete",
+      "description": "Main recipe that sets up Memcached and Redis",
+      "notes": "Created main.yml tasks file based on Chef default.rb recipe"
+    },
+    {
+      "category": "recipes",
+      "source_path": "/workspace/source/migration-dependencies/cookbook_artifacts/memcached-7992788f1a376defb902059063f5295e37d281cb/recipes/default.rb",
+      "target_path": "./ansible/roles/cache/tasks/memcached.yml",
+      "status": "complete",
+      "description": "Memcached installation and configuration",
+      "notes": "Created memcached.yml tasks file for memcached installation and configuration"
+    },
+    {
+      "category": "recipes",
+      "source_path": "/workspace/source/migration-dependencies/cookbook_artifacts/redisio-cac70a2ec9102cac4f5391358c8565d244f5d4db/recipes/default.rb",
+      "target_path": "./ansible/roles/cache/tasks/redis.yml",
+      "status": "complete",
+      "description": "Redis installation and configuration",
+      "notes": "Created redis.yml tasks file for Redis installation and configuration"
+    },
+    {
+      "category": "recipes",
+      "source_path": "/workspace/source/migration-dependencies/cookbook_artifacts/redisio-cac70a2ec9102cac4f5391358c8565d244f5d4db/recipes/_install_prereqs.rb",
+      "target_path": "./ansible/roles/cache/tasks/redis_prereqs.yml",
+      "status": "complete",
+      "description": "Redis prerequisites installation",
+      "notes": "Created redis_prereqs.yml tasks file for Redis prerequisites installation"
+    },
+    {
+      "category": "recipes",
+      "source_path": "/workspace/source/migration-dependencies/cookbook_artifacts/redisio-cac70a2ec9102cac4f5391358c8565d244f5d4db/recipes/install.rb",
+      "target_path": "./ansible/roles/cache/tasks/redis_install.yml",
+      "status": "complete",
+      "description": "Redis installation",
+      "notes": "Created redis_install.yml tasks file for Redis installation"
+    },
+    {
+      "category": "recipes",
+      "source_path": "/workspace/source/migration-dependencies/cookbook_artifacts/redisio-cac70a2ec9102cac4f5391358c8565d244f5d4db/recipes/ulimit.rb",
+      "target_path": "./ansible/roles/cache/tasks/redis_ulimit.yml",
+      "status": "complete",
+      "description": "Redis ulimit configuration",
+      "notes": "Created redis_ulimit.yml tasks file for Redis ulimit configuration"
+    },
+    {
+      "category": "recipes",
+      "source_path": "/workspace/source/migration-dependencies/cookbook_artifacts/redisio-cac70a2ec9102cac4f5391358c8565d244f5d4db/recipes/disable_os_default.rb",
+      "target_path": "./ansible/roles/cache/tasks/redis_disable_default.yml",
+      "status": "complete",
+      "description": "Disable OS default Redis service",
+      "notes": "Created redis_disable_default.yml tasks file to disable OS default Redis service"
+    },
+    {
+      "category": "recipes",
+      "source_path": "/workspace/source/migration-dependencies/cookbook_artifacts/redisio-cac70a2ec9102cac4f5391358c8565d244f5d4db/recipes/configure.rb",
+      "target_path": "./ansible/roles/cache/tasks/redis_configure.yml",
+      "status": "complete",
+      "description": "Redis configuration",
+      "notes": "Created redis_configure.yml tasks file for Redis configuration"
+    },
+    {
+      "category": "recipes",
+      "source_path": "/workspace/source/migration-dependencies/cookbook_artifacts/redisio-cac70a2ec9102cac4f5391358c8565d244f5d4db/recipes/enable.rb",
+      "target_path": "./ansible/roles/cache/tasks/redis_enable.yml",
+      "status": "complete",
+      "description": "Enable Redis service",
+      "notes": "Created redis_enable.yml tasks file for enabling Redis services"
+    },
+    {
+      "category": "recipes",
+      "source_path": "/workspace/source/migration-dependencies/cookbook_artifacts/redisio-cac70a2ec9102cac4f5391358c8565d244f5d4db/providers/configure.rb",
+      "target_path": "./ansible/roles/cache/tasks/redis_configure_provider.yml",
+      "status": "complete",
+      "description": "Redis configure provider",
+      "notes": "Created redis_configure_provider.yml tasks file for Redis configuration provider"
+    },
+    {
+      "category": "recipes",
+      "source_path": "/workspace/source/migration-dependencies/cookbook_artifacts/redisio-cac70a2ec9102cac4f5391358c8565d244f5d4db/providers/install.rb",
+      "target_path": "./ansible/roles/cache/tasks/redis_install_provider.yml",
+      "status": "complete",
+      "description": "Redis install provider",
+      "notes": "Created redis_install_provider.yml tasks file for Redis installation provider"
+    },
+    {
+      "category": "templates",
+      "source_path": "/workspace/source/migration-dependencies/cookbook_artifacts/redisio-cac70a2ec9102cac4f5391358c8565d244f5d4db/templates/default/redis.conf.erb",
+      "target_path": "./ansible/roles/cache/templates/redis.conf.j2",
+      "status": "complete",
+      "description": "Redis configuration template",
+      "notes": "Created redis.conf.j2 template for Redis configuration"
+    },
+    {
+      "category": "templates",
+      "source_path": "/workspace/source/migration-dependencies/cookbook_artifacts/redisio-cac70a2ec9102cac4f5391358c8565d244f5d4db/templates/default/redis.init.erb",
+      "target_path": "./ansible/roles/cache/templates/redis.init.j2",
+      "status": "complete",
+      "description": "Redis init script template",
+      "notes": "Created redis.init.j2 template for Redis init script"
+    },
+    {
+      "category": "templates",
+      "source_path": "/workspace/source/migration-dependencies/cookbook_artifacts/redisio-cac70a2ec9102cac4f5391358c8565d244f5d4db/templates/default/redis.upstart.conf.erb",
+      "target_path": "./ansible/roles/cache/templates/redis.upstart.conf.j2",
+      "status": "complete",
+      "description": "Redis upstart configuration template",
+      "notes": "Created redis.upstart.conf.j2 template for Redis upstart configuration"
+    },
+    {
+      "category": "templates",
+      "source_path": "/workspace/source/migration-dependencies/cookbook_artifacts/redisio-cac70a2ec9102cac4f5391358c8565d244f5d4db/templates/default/redis@.service.erb",
+      "target_path": "./ansible/roles/cache/templates/redis@.service.j2",
+      "status": "complete",
+      "description": "Redis systemd service template",
+      "notes": "Created redis@.service.j2 template for Redis systemd service"
+    },
+    {
+      "category": "attributes",
+      "source_path": "/workspace/source/migration-dependencies/cookbook_artifacts/memcached-7992788f1a376defb902059063f5295e37d281cb/attributes/default.rb",
+      "target_path": "./ansible/roles/cache/defaults/memcached.yml",
+      "status": "complete",
+      "description": "Memcached default attributes",
+      "notes": "Created memcached defaults based on Chef attributes"
+    },
+    {
+      "category": "attributes",
+      "source_path": "/workspace/source/migration-dependencies/cookbook_artifacts/redisio-cac70a2ec9102cac4f5391358c8565d244f5d4db/attributes/default.rb",
+      "target_path": "./ansible/roles/cache/defaults/redis.yml",
+      "status": "complete",
+      "description": "Redis default attributes",
+      "notes": "Created redis defaults based on Chef attributes"
+    },
+    {
+      "category": "dependencies",
+      "source_path": "collection:community.general",
+      "target_path": "./ansible/roles/cache/requirements.yml",
+      "status": "complete",
+      "description": "Ansible Redis collection",
+      "notes": "Created requirements.yml file for role dependencies"
+    },
+    {
+      "category": "structure",
+      "source_path": "N/A",
+      "target_path": "ansible/roles/cache/meta/main.yml",
+      "status": "complete",
+      "description": "Created standard meta/main.yml",
+      "notes": ""
+    },
+    {
+      "category": "recipes",
+      "source_path": "/workspace/source/migration-dependencies/cookbook_artifacts/redisio-cac70a2ec9102cac4f5391358c8565d244f5d4db/recipes/default.rb",
+      "target_path": "./ansible/roles/cache/tasks/main.yml",
+      "status": "complete",
+      "description": "Main tasks file for the cache role",
+      "notes": "Created main.yml tasks file for the cache role"
+    },
+    {
+      "category": "attributes",
+      "source_path": "/workspace/source/migration-dependencies/cookbook_artifacts/redisio-cac70a2ec9102cac4f5391358c8565d244f5d4db/attributes/default.rb",
+      "target_path": "./ansible/roles/cache/vars/redis.yml",
+      "status": "complete",
+      "description": "Redis variables file",
+      "notes": "Created redis.yml variables file for Redis configuration"
+    },
+    {
+      "category": "structure",
+      "source_path": "/workspace/source/migration-dependencies/cookbook_artifacts/redisio-cac70a2ec9102cac4f5391358c8565d244f5d4db/recipes/enable.rb",
+      "target_path": "./ansible/roles/cache/handlers/main.yml",
+      "status": "complete",
+      "description": "Redis handlers file",
+      "notes": "Created handlers/main.yml file for Redis service handlers"
+    },
+    {
+      "category": "attributes",
+      "source_path": "/workspace/source/migration-dependencies/cookbook_artifacts/redisio-cac70a2ec9102cac4f5391358c8565d244f5d4db/attributes/default.rb",
+      "target_path": "./ansible/roles/cache/defaults/main.yml",
+      "status": "complete",
+      "description": "Redis default variables",
+      "notes": "Created defaults/main.yml file for Redis default variables"
+    },
+    {
+      "category": "structure",
+      "source_path": "/workspace/source/migration-dependencies/cookbook_artifacts/redisio-cac70a2ec9102cac4f5391358c8565d244f5d4db/metadata.rb",
+      "target_path": "./ansible/roles/cache/meta/main.yml",
+      "status": "complete",
+      "description": "Redis role metadata",
+      "notes": "Created meta/main.yml file for Redis role metadata"
+    },
+    {
+      "category": "structure",
+      "source_path": "/workspace/source/migration-dependencies/cookbook_artifacts/redisio-cac70a2ec9102cac4f5391358c8565d244f5d4db/README.md",
+      "target_path": "./ansible/roles/cache/README.md",
+      "status": "complete",
+      "description": "Redis role README",
+      "notes": "Created README.md file for Redis role documentation"
+    }
+  ]
+}
