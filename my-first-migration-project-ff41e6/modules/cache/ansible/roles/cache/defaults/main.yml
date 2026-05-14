@@ -1,0 +1,11 @@
+---
+redis_port: "6379"
+redis_log_dir: /var/log/redis
+redis_log_dir_owner: redis
+redis_log_dir_group: redis
+redis_log_dir_mode: "0755"
+redis_conf_path: /etc/redis/6379.conf
+memcached_port: 11211
+memcached_listen_ip: 127.0.0.1
+memcached_max_memory: 64
+memcached_max_connections: 1024

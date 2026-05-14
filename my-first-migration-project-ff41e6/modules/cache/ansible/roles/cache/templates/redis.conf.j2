@@ -1,0 +1,44 @@
+# Redis configuration file
+# This is a template for Redis configuration
+
+# Network
+bind 0.0.0.0
+port {{ redis_port }}
+protected-mode yes
+
+# General
+daemonize yes
+supervised systemd
+pidfile /var/run/redis/redis-server-{{ redis_port }}.pid
+loglevel notice
+logfile /var/log/redis/redis-server-{{ redis_port }}.log
+
+# Security
+requirepass {{ redis_password }}
+
+# Memory management
+maxmemory-policy allkeys-lru
+maxmemory 256mb
+
+# Persistence
+save 900 1
+save 300 10
+save 60 10000
+stop-writes-on-bgsave-error yes
+rdbcompression yes
+rdbchecksum yes
+dbfilename dump-{{ redis_port }}.rdb
+dir /var/lib/redis
+
+# Advanced config
+tcp-backlog 511
+tcp-keepalive 300
+timeout 0
+databases 16
+
+# Important: The following settings are intentionally removed
+# replica-serve-stale-data
+# replica-read-only
+# repl-ping-replica-period
+# client-output-buffer-limit
+# replica-priority

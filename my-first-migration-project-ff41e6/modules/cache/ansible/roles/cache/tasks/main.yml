@@ -1,0 +1,86 @@
+---
+- name: Validate credential variables
+  ansible.builtin.include_tasks: validate_credentials.yml
+- name: Install memcached
+  ansible.builtin.package:
+    name: memcached
+    state: present
+- name: Configure memcached
+  ansible.builtin.template:
+    src: memcached.conf.j2
+    dest: /etc/memcached.conf
+    mode: "0644"
+  notify: Restart memcached
+  when: ansible_os_family == 'Debian'
+- name: Configure memcached (RHEL/CentOS)
+  ansible.builtin.template:
+    src: memcached.sysconfig.j2
+    dest: /etc/sysconfig/memcached
+    mode: "0644"
+  notify: Restart memcached
+  when: ansible_os_family == 'RedHat'
+- name: Ensure memcached service is enabled and running
+  ansible.builtin.service:
+    name: memcached
+    state: started
+    enabled: true
+- name: Install Redis
+  ansible.builtin.package:
+    name: redis-server
+    state: present
+  when: ansible_os_family == 'Debian'
+- name: Install Redis (RHEL/CentOS)
+  ansible.builtin.package:
+    name: redis
+    state: present
+  when: ansible_os_family == 'RedHat'
+- name: Ensure Redis user and group exist
+  ansible.builtin.group:
+    name: "{{ redis_log_dir_group }}"
+    state: present
+  when: redis_log_dir_group != "root"
+- name: Ensure Redis user exists
+  ansible.builtin.user:
+    name: "{{ redis_log_dir_owner }}"
+    group: "{{ redis_log_dir_group }}"
+    system: true
+    state: present
+  when: redis_log_dir_owner != "root"
+- name: Create Redis log directory
+  ansible.builtin.file:
+    path: "{{ redis_log_dir }}"
+    state: directory
+    owner: "{{ redis_log_dir_owner }}"
+    group: "{{ redis_log_dir_group }}"
+    mode: "{{ redis_log_dir_mode }}"
+    recurse: true
+- name: Configure Redis
+  ansible.builtin.template:
+    src: redis.conf.j2
+    dest: "{{ redis_conf_path }}"
+    mode: "0644"
+  notify: Restart redis
+- name: Remove unwanted Redis configuration lines
+  ansible.builtin.lineinfile:
+    path: "{{ redis_conf_path }}"
+    regexp: "{{ item }}"
+    state: absent
+  loop:
+    - ^replica-serve-stale-data.*$
+    - ^replica-read-only.*$
+    - ^repl-ping-replica-period.*$
+    - ^client-output-buffer-limit.*$
+    - ^replica-priority.*$
+  notify: Restart redis
+- name: Ensure Redis service is enabled and running
+  ansible.builtin.service:
+    name: redis-server@{{ redis_port }}
+    state: started
+    enabled: true
+  when: ansible_os_family == 'Debian'
+- name: Ensure Redis service is enabled and running (RHEL/CentOS)
+  ansible.builtin.service:
+    name: redis
+    state: started
+    enabled: true
+  when: ansible_os_family == 'RedHat'
