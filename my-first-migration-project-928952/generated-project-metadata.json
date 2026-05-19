@@ -6,15 +6,21 @@
     "technology": "Chef"
   },
   {
-    "name": "cache",
-    "path": "cookbooks/cache",
-    "description": "Caching services configuration including Memcached and Redis with authentication",
+    "name": "renamed-fastapi-tutorial",
+    "path": "cookbooks/fastapi-tutorial",
+    "description": "Python FastAPI application deployment with PostgreSQL database backend",
     "technology": "Chef"
   },
   {
-    "name": "fastapi-tutorial",
-    "path": "cookbooks/fastapi-tutorial",
-    "description": "Python FastAPI application deployment with PostgreSQL database backend",
+    "name": "something-added",
+    "path": "cookbooks/broken-path",
+    "description": "A newly added module for tests",
+    "technology": "Chef"
+  },
+  {
+    "name": "cache",
+    "path": "cookbooks/cache",
+    "description": "Caching services implementation including Memcached and Redis",
     "technology": "Chef"
   }
 ]
