@@ -21,11 +21,6 @@ This repository contains Chef cookbooks that need individual migration planning:
     - Key Features: Multi-site configuration, SSL certificate generation, security hardening (fail2ban, ufw, sysctl)
 
 
-- **fastapi-tutorial**:
-    - Description: Deploys a FastAPI Python application with PostgreSQL database backend
-    - Path: cookbooks/fastapi-tutorial
-    - Technology: Chef
-    - Key Features: Python virtual environment setup, Git repository deployment, PostgreSQL database configuration, systemd service management
 
 ### Infrastructure Files
 
