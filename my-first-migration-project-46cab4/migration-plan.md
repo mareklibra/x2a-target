@@ -29,6 +29,11 @@ This repository contains Chef cookbooks that need individual migration planning:
     - Technology: Chef
     - Key Features: Multi-site configuration, SSL certificate generation, security hardening (fail2ban, ufw firewall), sysctl security settings
 
+- **something-added**:
+    - Description: foobar
+    - Path: cookbooks/broken
+    - Technology: Chef
+    - Key Features: nothing
 
 ### Infrastructure Files
 
