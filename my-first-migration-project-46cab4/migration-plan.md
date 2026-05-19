@@ -29,17 +29,6 @@ This repository contains Chef cookbooks that need individual migration planning:
     - Technology: Chef
     - Key Features: Multi-site configuration, SSL certificate generation, security hardening (fail2ban, ufw firewall), sysctl security settings
 
-- **cache**:
-    - Description: Caching services configuration including Memcached and Redis with authentication
-    - Path: cookbooks/cache
-    - Technology: Chef
-    - Key Features: Redis with password authentication, Memcached configuration, log directory management
-
-- **fastapi-tutorial**:
-    - Description: Python FastAPI application deployment with PostgreSQL database backend
-    - Path: cookbooks/fastapi-tutorial
-    - Technology: Chef
-    - Key Features: Python virtual environment setup, Git repository deployment, PostgreSQL database creation, systemd service configuration
 
 ### Infrastructure Files
 
