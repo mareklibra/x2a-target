@@ -8,13 +8,13 @@
   {
     "name": "cache",
     "path": "cookbooks/cache",
-    "description": "Implements Memcached and Redis configuration with authentication and proper service management",
+    "description": "Implements Memcached and Redis configurations with authentication for caching services",
     "technology": "Chef"
   },
   {
     "name": "fastapi-tutorial",
     "path": "cookbooks/fastapi-tutorial",
-    "description": "Sets up PostgreSQL database, deploys Python FastAPI application, configures environment variables, and sets up systemd service",
+    "description": "Deploys a FastAPI Python application with PostgreSQL database setup and systemd service configuration",
     "technology": "Chef"
   }
 ]
