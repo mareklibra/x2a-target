@@ -10,17 +10,5 @@
     "path": "cookbooks/broken",
     "description": "foobar",
     "technology": "Chef"
-  },
-  {
-    "name": "cache",
-    "path": "cookbooks/cache",
-    "description": "Supporting services for caching including Memcached and Redis with authentication",
-    "technology": "Chef"
-  },
-  {
-    "name": "fastapi-tutorial",
-    "path": "cookbooks/fastapi-tutorial",
-    "description": "FastAPI application backed by PostgreSQL database with Python environment configuration",
-    "technology": "Chef"
   }
 ]
