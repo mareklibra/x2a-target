@@ -1,20 +1,26 @@
 [
   {
+    "name": "something-added",
+    "path": "cookbooks/broken",
+    "description": "foobar",
+    "technology": "Chef"
+  },
+  {
     "name": "nginx-multisite",
     "path": "cookbooks/nginx-multisite",
-    "description": "Nginx web server with multiple SSL-enabled virtual hosts, security hardening, and site configuration.",
+    "description": "Configures multi-site Nginx web server with SSL certificates, security configurations including fail2ban, ufw, and sysctl hardening.",
     "technology": "Chef"
   },
   {
     "name": "cache",
     "path": "cookbooks/cache",
-    "description": "Caching services configuration including Memcached and Redis with authentication.",
+    "description": "Implements Redis and Memcached caching services with authentication for Redis.",
     "technology": "Chef"
   },
   {
     "name": "fastapi-tutorial",
     "path": "cookbooks/fastapi-tutorial",
-    "description": "Python FastAPI application deployment with PostgreSQL database backend.",
+    "description": "Deploys a FastAPI application with PostgreSQL database backend and configures systemd service.",
     "technology": "Chef"
   }
 ]
