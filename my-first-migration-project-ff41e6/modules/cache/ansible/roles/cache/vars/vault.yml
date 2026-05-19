@@ -1,7 +1,0 @@
----
-# This file is a placeholder for vault variables
-# In production, the redis_password will be provided by AAP credential injection
-# The actual password is defined in AAP credentials and injected at runtime
-
-# Example of how the variable would be defined if not using AAP credential injection:
-# redis_password: supersecretpassword
