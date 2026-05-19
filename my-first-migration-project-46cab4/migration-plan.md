@@ -85,16 +85,8 @@ This repository contains Chef cookbooks that need individual migration planning:
    - Configure SSL certificate generation
    - Implement multi-site configuration
 
-2. **cache** (Priority 2): Supporting services
-   - Implement Memcached configuration
-   - Implement Redis with authentication
-   - Ensure proper service management
+2. **something-added** (Priority 2): Supporting services
 
-3. **fastapi-tutorial** (Priority 3): Application layer
-   - Implement PostgreSQL database setup
-   - Configure Python environment and dependencies
-   - Deploy application code
-   - Set up systemd service
 
 ### Assumptions
 
