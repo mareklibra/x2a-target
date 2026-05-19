@@ -23,11 +23,6 @@ This repository contains Chef cookbooks that need individual migration planning:
 
 ### MODULE INVENTORY
 
-- **nginx-multisite**:
-    - Description: Nginx web server with multiple SSL-enabled virtual hosts, security hardening, and custom configurations
-    - Path: cookbooks/nginx-multisite
-    - Technology: Chef
-    - Key Features: Multi-site configuration, SSL certificate generation, security hardening (fail2ban, ufw firewall), sysctl security settings
 
 - **something-added**:
     - Description: foobar
@@ -79,13 +74,7 @@ This repository contains Chef cookbooks that need individual migration planning:
 
 ### Migration Order
 
-1. **nginx-multisite** (Priority 1): Core infrastructure component that other services depend on
-   - Create base Nginx role
-   - Implement security hardening (fail2ban, ufw, sysctl)
-   - Configure SSL certificate generation
-   - Implement multi-site configuration
-
-2. **something-added** (Priority 2): Supporting services
+1. **something-added** (Priority 1): Supporting services
 
 
 ### Assumptions
