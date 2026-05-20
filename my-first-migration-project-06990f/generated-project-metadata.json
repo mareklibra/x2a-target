@@ -1,7 +1,7 @@
 [
   {
     "name": "nginx-multisite",
-    "path": "cookbooks/nginx-multisite",
+    "path": "cookbooks/nginx-multisite22",
     "description": "Configures Nginx with multiple SSL-enabled virtual hosts, security hardening, and fail2ban integration",
     "technology": "Chef"
   },
@@ -12,9 +12,15 @@
     "technology": "Chef"
   },
   {
+    "name": "something-added",
+    "path": "cookbooks/cache",
+    "description": "nothing",
+    "technology": "Chef"
+  },
+  {
     "name": "fastapi-tutorial",
     "path": "cookbooks/fastapi-tutorial",
-    "description": "Deploys a FastAPI Python application with PostgreSQL database backend",
+    "description": "Deploys a FastAPI application with PostgreSQL database integration",
     "technology": "Chef"
   }
 ]
