@@ -1,0 +1,13 @@
+---
+- name: Validate credential variables
+  ansible.builtin.include_tasks: validate_credentials.yml
+- name: Configure Memcached
+  ansible.builtin.include_tasks: memcached.yml
+  tags:
+    - memcached
+    - cache
+- name: Configure Redis
+  ansible.builtin.include_tasks: redis.yml
+  tags:
+    - redis
+    - cache

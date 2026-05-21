@@ -1,0 +1,32 @@
+# Redis configuration file
+
+# Network
+port {{ redis_port }}
+bind 127.0.0.1
+
+# General
+daemonize yes
+pidfile /var/run/redis/{{ redis_port }}.pid
+logfile {{ redis_log_dir }}/redis_{{ redis_port }}.log
+
+# Security
+requirepass {{ redis_password }}
+
+# Memory Management
+maxmemory 256mb
+maxmemory-policy allkeys-lru
+
+# Persistence
+save 900 1
+save 300 10
+save 60 10000
+dbfilename dump.rdb
+dir /var/lib/redis
+
+# Replication settings
+# The following settings are intentionally removed:
+# replica-serve-stale-data
+# replica-read-only
+# repl-ping-replica-period
+# client-output-buffer-limit
+# replica-priority

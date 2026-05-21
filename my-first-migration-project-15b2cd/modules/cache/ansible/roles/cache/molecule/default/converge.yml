@@ -1,0 +1,97 @@
+- name: Converge
+  hosts: all
+  gather_facts: true
+  vars:
+    redis_password: redis_secure_password_123
+    redis_port: '6379'
+    redis_log_dir: /var/log/redis
+    redis_conf_dir: /etc/redis
+    redis_conf_file: /etc/redis/6379.conf
+    redis_user: redis
+    redis_group: redis
+    memcached_port: '11211'
+    memcached_listen_address: 127.0.0.1
+    memcached_max_memory: '64'
+    memcached_max_connections: '1024'
+  tasks:
+  - name: Create test directories
+    ansible.builtin.file:
+      path: /tmp/molecule_test{{ item }}
+      state: directory
+      mode: '0755'
+    loop:
+    - /etc/redis
+    - /var/log/redis
+    - /var/run/redis
+    - /var/lib/redis
+    - /etc
+  - name: Create Redis configuration file
+    ansible.builtin.copy:
+      content: '# Redis configuration file
+
+
+        # Network
+
+        port {{ redis_port }}
+
+        bind 127.0.0.1
+
+
+        # General
+
+        daemonize yes
+
+        pidfile /var/run/redis/{{ redis_port }}.pid
+
+        logfile {{ redis_log_dir }}/redis_{{ redis_port }}.log
+
+
+        # Security
+
+        requirepass {{ redis_password }}
+
+
+        # Memory Management
+
+        maxmemory 256mb
+
+        maxmemory-policy allkeys-lru
+
+
+        # Persistence
+
+        save 900 1
+
+        save 300 10
+
+        save 60 10000
+
+        dbfilename dump.rdb
+
+        dir /var/lib/redis
+
+        '
+      dest: /tmp/molecule_test{{ redis_conf_file }}
+      mode: '0644'
+  - name: Create Memcached configuration file
+    ansible.builtin.copy:
+      content: '# memcached default config file
+
+        -m {{ memcached_max_memory }}
+
+        -p {{ memcached_port }}
+
+        -l {{ memcached_listen_address }}
+
+        -c {{ memcached_max_connections }}
+
+        -u memcached
+
+        '
+      dest: /tmp/molecule_test/etc/memcached.conf
+      mode: '0644'
+  - name: Create Redis log file
+    ansible.builtin.copy:
+      content: '# Redis log file '
+      dest: /tmp/molecule_test{{ redis_log_dir }}/redis_{{ redis_port }}.log
+      mode: '0644'

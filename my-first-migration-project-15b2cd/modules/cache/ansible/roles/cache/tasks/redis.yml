@@ -1,0 +1,54 @@
+---
+- name: Install Redis packages
+  ansible.builtin.package:
+    name: redis-server
+    state: present
+- name: Ensure Redis user exists
+  ansible.builtin.user:
+    name: "{{ redis_user }}"
+    group: "{{ redis_group }}"
+    system: true
+    state: present
+  when: redis_user != "root"
+- name: Create Redis configuration directory
+  ansible.builtin.file:
+    path: "{{ redis_conf_dir }}"
+    owner: "{{ redis_user }}"
+    group: "{{ redis_group }}"
+    mode: "0755"
+    state: directory
+- name: Create Redis log directory
+  ansible.builtin.file:
+    path: "{{ redis_log_dir }}"
+    owner: "{{ redis_user }}"
+    group: "{{ redis_group }}"
+    mode: "0755"
+    state: directory
+    recurse: true
+- name: Create Redis PID directory
+  ansible.builtin.file:
+    path: /var/run/redis
+    owner: "{{ redis_user }}"
+    group: "{{ redis_group }}"
+    mode: "0755"
+    state: directory
+- name: Create Redis data directory
+  ansible.builtin.file:
+    path: /var/lib/redis
+    owner: "{{ redis_user }}"
+    group: "{{ redis_group }}"
+    mode: "0755"
+    state: directory
+- name: Configure Redis
+  ansible.builtin.template:
+    src: redis.conf.j2
+    dest: "{{ redis_conf_file }}"
+    owner: "{{ redis_user }}"
+    group: "{{ redis_group }}"
+    mode: "0644"
+  notify: Restart redis
+- name: Ensure Redis service is enabled and started
+  ansible.builtin.service:
+    name: redis@{{ redis_port }}
+    state: started
+    enabled: true
