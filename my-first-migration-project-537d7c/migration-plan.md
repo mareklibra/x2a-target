@@ -16,21 +16,21 @@ This repository contains Chef cookbooks that need individual migration planning:
 
 - **nginx-multisite**:
     - Description: Nginx web server with multiple SSL-enabled virtual hosts, security hardening, and custom configurations
-    - Path: cookbooks/nginx-multisite
+    - Path: cookbooks/nginx-multisite-something-else
     - Technology: Chef
     - Key Features: Multi-site configuration, SSL certificate generation, security hardening (fail2ban, ufw firewall)
 
-- **cache**:
-    - Description: Caching services configuration including Memcached and Redis with authentication
-    - Path: cookbooks/cache
-    - Technology: Chef
-    - Key Features: Redis with password authentication, Memcached configuration
-
-- **fastapi-tutorial**:
+- **renamed-fastapi-tutorial**:
     - Description: Python FastAPI application deployment with PostgreSQL database backend
     - Path: cookbooks/fastapi-tutorial
     - Technology: Chef
     - Key Features: Python virtual environment setup, Git repository deployment, PostgreSQL database provisioning, systemd service configuration
+
+- **something-added**:
+    - Description: foo
+    - Path: cookbooks/nginx-multisite-something-else-2
+    - Technology: Chef
+    - Key Features: nothing special
 
 ### Infrastructure Files
 
@@ -93,13 +93,6 @@ This repository contains Chef cookbooks that need individual migration planning:
    - Core infrastructure component that other services depend on
    - Contains security configurations that should be established first
 
-2. **cache** (Priority 2)
-   - Supporting service with external dependencies
-   - Moderate complexity with Redis authentication configuration
-
-3. **fastapi-tutorial** (Priority 3)
-   - Application layer that depends on infrastructure being in place
-   - Most complex with database, application code, and service configuration
 
 ### Assumptions
 
