@@ -1,0 +1,82 @@
+---
+- name: Validate credential variables
+  ansible.builtin.include_tasks: validate_credentials.yml
+- name: Install Python and required system packages
+  ansible.builtin.package:
+    name: "{{ fastapi_python_packages }}"
+    state: present
+- name: Ensure PostgreSQL is installed
+  ansible.builtin.package:
+    name:
+      - postgresql
+      - postgresql-contrib
+      - libpq-dev
+    state: present
+- name: Create application directory
+  ansible.builtin.file:
+    path: "{{ fastapi_app_dir }}"
+    owner: root
+    group: root
+    mode: "0755"
+    state: directory
+- name: Clone FastAPI tutorial repository
+  ansible.builtin.git:
+    repo: "{{ fastapi_repo_url }}"
+    dest: "{{ fastapi_app_dir }}"
+    version: "{{ fastapi_repo_branch }}"
+    force: true
+- name: Create Python virtual environment
+  ansible.builtin.command:
+    cmd: python3 -m venv {{ fastapi_venv_path }}
+    creates: "{{ fastapi_venv_path }}"
+- name: Check if requirements are already installed
+  ansible.builtin.stat:
+    path: "{{ fastapi_app_dir }}/.requirements_installed"
+  register: requirements_installed
+- name: Install Python dependencies
+  ansible.builtin.command:
+    cmd: "{{ fastapi_venv_path }}/bin/pip install -r {{ fastapi_app_dir }}/requirements.txt"
+    chdir: "{{ fastapi_app_dir }}"
+  when: not requirements_installed.stat.exists
+  register: pip_install
+- name: Mark requirements as installed
+  ansible.builtin.file:
+    path: "{{ fastapi_app_dir }}/.requirements_installed"
+    state: touch
+    mode: "0644"
+  when: pip_install is changed
+- name: Enable and start PostgreSQL service
+  ansible.builtin.service:
+    name: postgresql
+    state: started
+    enabled: true
+- name: Create PostgreSQL user and database
+  ansible.builtin.shell:
+    cmd: 'sudo -u postgres psql -c "CREATE USER {{ fastapi_db_user }} WITH PASSWORD ''{{ fastapi_db_password }}'';" || true
+
+      sudo -u postgres psql -c "CREATE DATABASE {{ fastapi_db_name }} OWNER {{ fastapi_db_user }};" || true
+
+      sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE {{ fastapi_db_name }} TO {{ fastapi_db_user }};" || true
+
+      '
+  changed_when: false
+- name: Create environment configuration file
+  ansible.builtin.template:
+    src: env.j2
+    dest: "{{ fastapi_app_dir }}/.env"
+    owner: root
+    group: root
+    mode: "0644"
+- name: Create systemd service file
+  ansible.builtin.template:
+    src: fastapi-tutorial.service.j2
+    dest: /etc/systemd/system/fastapi-tutorial.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Reload systemd daemon
+- name: Enable and start FastAPI service
+  ansible.builtin.service:
+    name: fastapi-tutorial
+    state: started
+    enabled: true
