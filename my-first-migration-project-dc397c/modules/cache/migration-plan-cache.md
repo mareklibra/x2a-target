@@ -4,7 +4,7 @@ source-path: cookbooks/cache
 
 # Migration Plan: cache
 
-**TLDR**: This cookbook configures two caching services: Memcached and Redis. It sets up Redis with authentication and custom configuration, including a specific port (6379) and password. The cookbook relies heavily on external dependencies for the actual implementation of both services.
+**TLDR**: This cookbook configures two caching services: Memcached and Redis. It sets up a single Redis instance with authentication on port 6379 and includes Memcached with default settings. The cookbook applies a configuration fix to Redis by removing specific replication-related settings.
 
 ## Service Type and Instances
 
@@ -12,42 +12,54 @@ source-path: cookbooks/cache
 
 **Configured Instances**:
 
-- **Redis 6379**: 
+- **Redis**:
   - Location/Path: /etc/redis/6379.conf
   - Port/Socket: 6379
   - Key Config: Authentication enabled with password 'redis_secure_password_123'
   - Log Directory: /var/log/redis
 
 - **Memcached**:
-  - No specific configuration visible in this cookbook
-  - Relies on the external 'memcached' cookbook for configuration
+  - Location/Path: Default (determined by memcached cookbook)
+  - Port/Socket: Default (typically 11211)
+  - Key Config: Default settings from memcached cookbook
 
 ## File Structure
 
 ```
 cookbooks/cache/recipes/default.rb
+cookbooks/cache/metadata.rb
 ```
 
 ## Module Explanation
 
 The cookbook performs operations in this order:
 
-1. **default** (`cookbooks/cache/recipes/default.rb`):
+1. **memcached** (dependency cookbook):
    - Includes the memcached recipe from an external cookbook
-     - Resources: include_recipe (1)
-   - Sets Redis configuration attributes:
-     - Port: 6379
-     - Password: redis_secure_password_123
-     - Disables replicaservestaledata
+   - Resources: include_recipe (1)
+
+2. **redis configuration** (`cookbooks/cache/recipes/default.rb`):
+   - Sets Redis server attributes with port 6379 and password authentication
    - Creates Redis log directory at /var/log/redis
-     - Resources: directory (1)
+   - Resources: directory (1)
+
+3. **redisio** (dependency cookbook):
    - Includes the redisio recipe from an external cookbook
-     - Resources: include_recipe (1)
-   - Executes a ruby_block to modify Redis configuration file
-     - Removes several replica-related configuration lines from /etc/redis/6379.conf
-     - Resources: ruby_block (1)
-   - Includes the redisio::enable recipe from an external cookbook
-     - Resources: include_recipe (1)
+   - Resources: include_recipe (1)
+
+4. **redis config fix** (`cookbooks/cache/recipes/default.rb`):
+   - Applies a configuration fix to remove specific replication-related settings
+   - Modifies /etc/redis/6379.conf to remove:
+     - replica-serve-stale-data
+     - replica-read-only
+     - repl-ping-replica-period
+     - client-output-buffer-limit
+     - replica-priority
+   - Resources: ruby_block (1)
+
+5. **redisio::enable** (dependency cookbook):
+   - Includes the redisio::enable recipe to enable and start Redis service
+   - Resources: include_recipe (1)
 
 ## Dependencies
 
@@ -56,8 +68,8 @@ The cookbook performs operations in this order:
 - redisio
 
 **System package dependencies**:
-- Redis server (installed by redisio cookbook)
-- Memcached server (installed by memcached cookbook)
+- Redis server package (installed by redisio cookbook)
+- Memcached package (installed by memcached cookbook)
 
 **Service dependencies**:
 - redis service (managed by redisio cookbook)
@@ -77,21 +89,22 @@ The cookbook performs operations in this order:
 - **Variable(s)**: `node.default['redisio']['servers'][0]['requirepass']`
 - **Source file(s)**: cookbooks/cache/recipes/default.rb
 - **Current storage**: hardcoded
-- **Usage context**: Redis server authentication password
+- **Usage context**: Redis server authentication password used to secure Redis instance
 
 ## Checks for the Migration
 
 **Files to verify**:
 - /etc/redis/6379.conf
 - /var/log/redis (directory)
-- Memcached configuration files (location depends on memcached cookbook)
+- Memcached configuration file (location depends on memcached cookbook)
 
 **Service endpoints to check**:
-- Ports listening: 6379 (Redis)
-- Ports listening: 11211 (default Memcached port, but may vary based on memcached cookbook configuration)
+- Ports listening: 6379 (Redis), 11211 (Memcached default)
+- Unix sockets: None specified
+- Network interfaces: Default (0.0.0.0)
 
 **Templates rendered**:
-- No templates directly rendered by this cookbook
+- None directly in this cookbook (Redis config is managed by redisio cookbook)
 
 ## Pre-flight checks:
 
@@ -102,20 +115,16 @@ systemctl status redis@6379
 ps aux | grep redis
 
 # Redis connectivity
-redis-cli -h localhost -p 6379 ping
-redis-cli -h localhost -p 6379 -a 'redis_secure_password_123' ping
-redis-cli -h localhost -p 6379 -a 'redis_secure_password_123' info server
+redis-cli -p 6379 ping
+redis-cli -p 6379 -a 'redis_secure_password_123' ping
+redis-cli -p 6379 -a 'redis_secure_password_123' info server
 
 # Redis configuration validation
-cat /etc/redis/6379.conf | grep requirepass
-cat /etc/redis/6379.conf | grep -v "replica-serve-stale-data"
-cat /etc/redis/6379.conf | grep -v "replica-read-only"
-cat /etc/redis/6379.conf | grep -v "repl-ping-replica-period"
-cat /etc/redis/6379.conf | grep -v "client-output-buffer-limit"
-cat /etc/redis/6379.conf | grep -v "replica-priority"
+cat /etc/redis/6379.conf | grep -E 'port|requirepass'
+cat /etc/redis/6379.conf | grep -E 'replica-serve-stale-data|replica-read-only|repl-ping-replica-period|client-output-buffer-limit|replica-priority'
 
 # Redis logs
-ls -la /var/log/redis
+ls -la /var/log/redis/
 tail -f /var/log/redis/redis_6379.log
 
 # Redis network listening
@@ -128,16 +137,20 @@ systemctl status memcached
 ps aux | grep memcached
 
 # Memcached connectivity
-echo "stats" | nc localhost 11211
+echo stats | nc localhost 11211
 memcached-tool localhost:11211 stats
+
+# Memcached configuration validation
+cat /etc/memcached.conf
+
+# Memcached logs
+journalctl -u memcached -f
 
 # Memcached network listening
 netstat -tulpn | grep 11211
 ss -tlnp | grep memcached
 lsof -i :11211
 
-# Memory usage
-free -m
-ps aux | grep redis | awk '{print $2}' | xargs -I {} cat /proc/{}/status | grep VmRSS
-ps aux | grep memcached | awk '{print $2}' | xargs -I {} cat /proc/{}/status | grep VmRSS
+# Directory permissions
+ls -la /var/log/redis/
 ```
