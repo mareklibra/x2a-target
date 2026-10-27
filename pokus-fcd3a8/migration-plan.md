@@ -113,3 +113,5 @@ Estimated effort: 1–2 days for foundation, 2–3 days for `nginx-multisite`, 1
 - The commented `ssl_certificate` Berkshelf dependency is inactive.
 - Production DNS, certificates, secret storage, monitoring, backup, compliance, availability, and rollback requirements are unspecified.
 - Coordination requires an infrastructure owner for OS/network/security decisions, an application owner for FastAPI/PostgreSQL validation, and a security reviewer for credential rotation, SSH/firewall policy, and TLS. Role variables, rendered configurations, test evidence, and operating runbooks should be reviewed before Chef is removed.
+
+This is useless comment.
