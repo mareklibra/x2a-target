@@ -21,15 +21,6 @@ The following three modules are separate local cookbooks and each has a confirme
 - **Key Features:** Redis password authentication, Redis server configuration through the `redisio` cookbook, Memcached inclusion, Redis log-directory ownership/mode, and a Ruby configuration cleanup block removing replication-related directives.
 - **Migration target:** An Ansible cache role using OS packages or a pinned Redis role, explicit Redis configuration templates, service handlers, restricted network binding, and Ansible Vault for credentials.
 
-#### 2. `fastapi-tutorial`
-
-- **Path:** `cookbooks/fastapi-tutorial`
-- **Technology:** Chef cookbook
-- **Entrypoint:** `cookbooks/fastapi-tutorial/recipes/default.rb`
-- **Description:** Provisions a FastAPI tutorial application with Python 3, PostgreSQL, a Git checkout, a Python virtual environment, application dependencies, a database/user, an environment file, and a systemd service running Uvicorn on port 8000.
-- **Key Features:** Git source `https://github.com/dibanez/fastapi_tutorial.git` at `main`, `/opt/fastapi-tutorial` deployment directory, PostgreSQL service enablement, `fastapi` database/user creation, `.env` generation, and systemd daemon reload/start behavior.
-- **Migration target:** An Ansible application role using `git`, package/virtualenv tasks, `community.postgresql` database modules, Vault-backed environment variables, a dedicated non-root service account, and a templated systemd unit.
-
 #### 3. `nginx-multisite`
 
 - **Path:** `cookbooks/nginx-multisite`
