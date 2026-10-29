@@ -14,12 +14,6 @@ This repository contains Chef cookbooks that need individual migration planning:
     - Technology: Chef cookbook
     - Key Features: Four-recipe orchestration (`security`, `nginx`, `ssl`, and `sites`), templated nginx configuration, enabled-site symlinks, development self-signed certificates, fail2ban, UFW default-deny rules, and disabling root/password SSH authentication.
 
-- **cache**:
-    - Description: Installs and enables Memcached and Redis, creates the Redis log directory, and configures a Redis server on port 6379 with password authentication.
-    - Path: `cookbooks/cache`
-    - Technology: Chef cookbook
-    - Key Features: External `memcached` and `redisio` cookbook usage, Redis authentication, Redis enablement, and a post-configuration workaround that removes selected replication/buffer directives from `/etc/redis/6379.conf`.
-
 - **fastapi-tutorial**:
     - Description: Installs a Python FastAPI tutorial application from GitHub, creates a virtual environment, installs its requirements, configures PostgreSQL, creates the application database/user, writes a `.env` file, and runs Uvicorn through systemd.
     - Path: `cookbooks/fastapi-tutorial`
