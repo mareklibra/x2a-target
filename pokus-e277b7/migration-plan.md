@@ -15,13 +15,6 @@ This repository contains Chef cookbooks that need individual migration planning:
     - Key Features: Nginx service management, generated per-site configuration, `sites-available`/`sites-enabled` links, self-signed RSA certificates, Fail2ban, UFW, sysctl hardening, disabled root SSH login, disabled SSH password authentication, and packaged static content.
     - Ansible mapping: A role with separate tasks for Nginx, sites, TLS, and security; Jinja2 templates for the reviewed ERB files; handlers for Nginx, Fail2ban, SSH, and sysctl changes; variables for site definitions and certificate paths.
 
-- **cache**:
-    - Description: Installs and enables Memcached and Redis, configures one Redis server on port 6379 with password authentication, creates the Redis log directory, and performs a post-configuration cleanup of replication-related Redis directives.
-    - Path: `cookbooks/cache`
-    - Technology: Chef cookbook
-    - Key Features: External `memcached` and `redisio` cookbook integration, Redis authentication, service enablement, log directory ownership, and a Ruby-based configuration workaround.
-    - Ansible mapping: A cache role using distribution packages or explicitly selected Redis/Memcached roles/collections, native Redis configuration templates, systemd handlers, and an idempotent configuration model instead of text mutation.
-
 - **fastapi-tutorial**:
     - Description: Installs Python 3 tooling, Git, PostgreSQL packages, and `libpq-dev`; checks out the FastAPI tutorial application; creates a virtual environment; installs its requirements; creates a PostgreSQL database and user; writes an application `.env`; and runs Uvicorn as a systemd service on port 8000.
     - Path: `cookbooks/fastapi-tutorial`
