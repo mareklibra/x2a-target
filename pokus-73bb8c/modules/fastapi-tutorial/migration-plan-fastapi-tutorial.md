@@ -36,6 +36,8 @@ source-path: cookbooks/fastapi-tutorial
   - Privileges: `fastapi` receives all privileges on `fastapi_db`
 
 **Iterations**: None. The recipe contains no collection iteration or `.each` loop.
+Something new
+
 
 ## File Structure
 
