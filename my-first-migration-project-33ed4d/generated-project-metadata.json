@@ -1,0 +1,20 @@
+[
+  {
+    "name": "nginx-multisite",
+    "path": "cookbooks/nginx-multisite",
+    "description": "Installs and configures Nginx for three virtual hosts, including security hardening, static site content, and development TLS certificates.",
+    "technology": "Chef"
+  },
+  {
+    "name": "cache",
+    "path": "cookbooks/cache",
+    "description": "Installs and configures memcached and Redis services, including Redis authentication, logging, service enablement, and replication-related configuration cleanup.",
+    "technology": "Chef"
+  },
+  {
+    "name": "fastapi-tutorial",
+    "path": "cookbooks/fastapi-tutorial",
+    "description": "Provisions a FastAPI application with Python, PostgreSQL, Git-based deployment, a virtual environment, database credentials, and a systemd service.",
+    "technology": "Chef"
+  }
+]
