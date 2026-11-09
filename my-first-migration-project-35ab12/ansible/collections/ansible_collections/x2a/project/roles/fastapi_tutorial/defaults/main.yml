@@ -1,0 +1,4 @@
+---
+fastapi_tutorial_repository: https://github.com/dibanez/fastapi_tutorial.git
+fastapi_tutorial_revision: main
+fastapi_tutorial_secure_logging: true
