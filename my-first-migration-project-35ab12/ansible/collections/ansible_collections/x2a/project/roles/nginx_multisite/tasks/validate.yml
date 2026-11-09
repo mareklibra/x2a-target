@@ -1,0 +1,14 @@
+---
+- name: Validate nginx multisite configuration
+  ansible.builtin.command:
+    argv:
+      - nginx
+      - -t
+  changed_when: false
+
+- name: Validate SSH daemon configuration
+  ansible.builtin.command:
+    argv:
+      - sshd
+      - -t
+  changed_when: false
