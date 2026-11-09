@@ -1,0 +1,150 @@
+---
+# Unsupported pre-flight checks: the external redisio service name is a placeholder;
+# Redis ownership/mode values are not stated as expected outcomes; and service-journal
+# review plus the Memcached checks require dependency-specific service and port values.
+- name: Verify cache services
+  hosts: all
+  gather_facts: false
+  vars:
+    cache_secure_logging: true
+  tasks:
+    - name: Verify Redis listens on TCP port 6379
+      ansible.builtin.wait_for:
+        host: 127.0.0.1
+        port: 6379
+        state: started
+        timeout: 30
+
+    - name: Verify Redis configuration file exists
+      ansible.builtin.stat:
+        path: /etc/redis/6379.conf
+      register: cache_redis_config
+
+    - name: Assert Redis configuration file exists
+      ansible.builtin.assert:
+        that:
+          - cache_redis_config['stat']['exists']
+          - cache_redis_config['stat']['isreg']
+        fail_msg: Redis configuration file is missing or is not a regular file.
+
+    - name: Read Redis configuration
+      ansible.builtin.slurp:
+        src: /etc/redis/6379.conf
+      register: cache_redis_config_contents
+
+    - name: Verify Redis core configuration settings
+      ansible.builtin.assert:
+        that:
+          - (cache_redis_config_contents['content'] | b64decode) is search('(?m)^port\\s+6379\\s*$')
+          - (cache_redis_config_contents['content'] | b64decode) is search('(?m)^requirepass\\s+\\S+')
+        fail_msg: Redis port or password configuration is missing from /etc/redis/6379.conf.
+
+    - name: Verify removed Redis replication directives
+      ansible.builtin.assert:
+        that:
+          - (cache_redis_config_contents['content'] | b64decode) is not search('(?m)^(replica-serve-stale-data|replica-read-only|repl-ping-replica-period|client-output-buffer-limit|replica-priority)')
+        fail_msg: A targeted replication directive remains in /etc/redis/6379.conf.
+
+    - name: Verify Redis log directory exists
+      ansible.builtin.stat:
+        path: /var/log/redis
+      register: cache_redis_log_directory
+
+    - name: Assert Redis log directory exists
+      ansible.builtin.assert:
+        that:
+          - cache_redis_log_directory['stat']['exists']
+          - cache_redis_log_directory['stat']['isdir']
+        fail_msg: Redis log directory is missing or is not a directory.
+
+    - name: Authenticate to Redis with the migrated vaulted password
+      ansible.builtin.command:
+        argv:
+          - redis-cli
+          - -h
+          - 127.0.0.1
+          - -p
+          - "6379"
+          - -a
+          - "{{ redis_requirepass }}"
+          - PING
+      register: cache_redis_ping
+      changed_when: false
+      no_log: "{{ cache_secure_logging }}"
+
+    - name: Assert Redis authentication succeeds
+      ansible.builtin.assert:
+        that:
+          - cache_redis_ping['rc'] == 0
+          - cache_redis_ping['stdout'] | trim == 'PONG'
+        fail_msg: Redis authentication or PING failed.
+
+    - name: Write the Redis functional verification key
+      ansible.builtin.command:
+        argv:
+          - redis-cli
+          - -h
+          - 127.0.0.1
+          - -p
+          - "6379"
+          - -a
+          - "{{ redis_requirepass }}"
+          - SET
+          - chef_migration_check
+          - success
+      register: cache_redis_set
+      changed_when: false
+      no_log: "{{ cache_secure_logging }}"
+
+    - name: Assert Redis functional write succeeds
+      ansible.builtin.assert:
+        that:
+          - cache_redis_set['rc'] == 0
+          - cache_redis_set['stdout'] | trim == 'OK'
+        fail_msg: Redis functional write failed.
+
+    - name: Read the Redis functional verification key
+      ansible.builtin.command:
+        argv:
+          - redis-cli
+          - -h
+          - 127.0.0.1
+          - -p
+          - "6379"
+          - -a
+          - "{{ redis_requirepass }}"
+          - GET
+          - chef_migration_check
+      register: cache_redis_get
+      changed_when: false
+      no_log: "{{ cache_secure_logging }}"
+
+    - name: Assert Redis functional read returns success
+      ansible.builtin.assert:
+        that:
+          - cache_redis_get['rc'] == 0
+          - cache_redis_get['stdout'] | trim == 'success'
+        fail_msg: Redis functional read did not return success.
+
+    - name: Delete the Redis functional verification key
+      ansible.builtin.command:
+        argv:
+          - redis-cli
+          - -h
+          - 127.0.0.1
+          - -p
+          - "6379"
+          - -a
+          - "{{ redis_requirepass }}"
+          - DEL
+          - chef_migration_check
+      register: cache_redis_delete
+      changed_when: false
+      no_log: "{{ cache_secure_logging }}"
+
+    - name: Assert Redis functional delete succeeds
+      ansible.builtin.assert:
+        that:
+          - cache_redis_delete['rc'] == 0
+          - cache_redis_delete['stdout'] | trim == '1'
+        fail_msg: Redis functional delete failed.

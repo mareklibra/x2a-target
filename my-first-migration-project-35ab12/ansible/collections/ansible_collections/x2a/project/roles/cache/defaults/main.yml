@@ -1,0 +1,8 @@
+---
+cache_secure_logging: true
+cache_redis_port: 6379
+cache_redis_config_path: /etc/redis/6379.conf
+cache_redis_log_directory: /var/log/redis
+cache_redis_service_name: redis-server
+cache_redis_package_name: redis-server
+cache_memcached_enabled: false

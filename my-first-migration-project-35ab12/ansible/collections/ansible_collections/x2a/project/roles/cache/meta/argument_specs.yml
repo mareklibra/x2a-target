@@ -1,0 +1,47 @@
+---
+argument_specs:
+  main:
+    short_description: Configure Redis cache service settings
+    description:
+      - Configures the Redis cache instance and supporting paths used by the cache role.
+      - The Redis authentication password is injected by an AAP credential and is not a role default.
+    options:
+      cache_secure_logging:
+        type: bool
+        required: false
+        default: true
+        description: Whether to suppress output from tasks that handle the Redis password.
+      cache_redis_port:
+        type: int
+        required: false
+        default: 6379
+        description: TCP port used by the Redis instance.
+      cache_redis_config_path:
+        type: str
+        required: false
+        default: /etc/redis/6379.conf
+        description: Path to the Redis configuration file.
+      cache_redis_log_directory:
+        type: str
+        required: false
+        default: /var/log/redis
+        description: Directory used for Redis logs.
+      cache_redis_service_name:
+        type: str
+        required: false
+        default: redis-server
+        description: System service name for Redis.
+      cache_redis_package_name:
+        type: str
+        required: false
+        default: redis-server
+        description: Package name providing Redis.
+      cache_memcached_enabled:
+        type: bool
+        required: false
+        default: false
+        description: Whether to enable the optional Memcached integration.
+      redis_requirepass:
+        type: str
+        required: true
+        description: Redis authentication password injected by an AAP credential type.

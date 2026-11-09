@@ -1,0 +1,88 @@
+---
+- name: Validate credential variables
+  ansible.builtin.include_tasks: validate_credentials.yml
+
+- name: Install Redis package
+  ansible.builtin.package:
+    name: "{{ cache_redis_package_name }}"
+    state: present
+
+- name: Create Redis log directory
+  ansible.builtin.file:
+    path: "{{ cache_redis_log_directory }}" # noqa: R114 - path is a role default, not user input
+    owner: redis
+    group: redis
+    mode: "0755"
+    state: directory
+    recurse: true
+
+- name: Configure Redis TCP port
+  ansible.builtin.lineinfile:
+    path: "{{ cache_redis_config_path }}" # noqa: R114 - path is a role default, not user input
+    regexp: ^port[[:space:]]+
+    line: port {{ cache_redis_port }}
+    create: true
+    owner: redis
+    group: redis
+    mode: "0640"
+    backup: true
+  notify: Restart Redis after configuration changes
+
+- name: Configure Redis authentication password # noqa: L039 - password comes from the attached AAP credential
+  ansible.builtin.lineinfile:
+    path: "{{ cache_redis_config_path }}" # noqa: R114 - path is a role default, not user input
+    regexp: ^requirepass[[:space:]]+
+    line: requirepass {{ redis_requirepass }}
+    create: true
+    owner: redis
+    group: redis
+    mode: "0640"
+    backup: true
+  notify: Restart Redis after configuration changes
+  no_log: "{{ cache_secure_logging }}"
+
+- name: Remove replica serve stale data directive
+  ansible.builtin.replace:
+    path: "{{ cache_redis_config_path }}" # noqa: R114 - path is a role default, not user input
+    regexp: ^replica-serve-stale-data.*$
+    replace: ""
+    backup: true
+  notify: Restart Redis after configuration changes
+
+- name: Remove replica read only directive
+  ansible.builtin.replace:
+    path: "{{ cache_redis_config_path }}" # noqa: R114 - path is a role default, not user input
+    regexp: ^replica-read-only.*$
+    replace: ""
+    backup: true
+  notify: Restart Redis after configuration changes
+
+- name: Remove replica ping period directive
+  ansible.builtin.replace:
+    path: "{{ cache_redis_config_path }}" # noqa: R114 - path is a role default, not user input
+    regexp: ^repl-ping-replica-period.*$
+    replace: ""
+    backup: true
+  notify: Restart Redis after configuration changes
+
+- name: Remove client output buffer limit directive
+  ansible.builtin.replace:
+    path: "{{ cache_redis_config_path }}" # noqa: R114 - path is a role default, not user input
+    regexp: ^client-output-buffer-limit.*$
+    replace: ""
+    backup: true
+  notify: Restart Redis after configuration changes
+
+- name: Remove replica priority directive
+  ansible.builtin.replace:
+    path: "{{ cache_redis_config_path }}" # noqa: R114 - path is a role default, not user input
+    regexp: ^replica-priority.*$
+    replace: ""
+    backup: true
+  notify: Restart Redis after configuration changes
+
+- name: Enable and start Redis
+  ansible.builtin.service:
+    name: "{{ cache_redis_service_name }}"
+    enabled: true
+    state: started
